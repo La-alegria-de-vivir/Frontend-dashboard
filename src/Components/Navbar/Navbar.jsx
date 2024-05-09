@@ -55,15 +55,15 @@ function Navbar() {
             <ul className={`${menuOpen ? 'flex flex-col w-screen items-center space-y-4' : 'hidden'} md:hidden`}>
               <li><a className="hover:text-green-400" href="/">Inicio</a></li>
               <li><a className="hover:text-green-400" href="/alergenos">Alérgenos</a></li>
-              <li><a className="hover:text-green-400" href="/reservation">Reserva</a></li>
-              <li><a className="hover:text-green-400" href="#">Menú</a></li>
+              <li><a className="hover:text-green-400" href="/create-reservations">Reserva</a></li>
+              <li><a className="hover:text-green-400" href="/create-menu">Menú</a></li>
               <li><a className="hover:text-green-400" href="#">Contacto</a></li>
             </ul>
             <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
               <li><a className="hover:text-green-400" href="/">Inicio</a></li>
               <li><a className="hover:text-green-400" href="/alergenos">Alérgenos</a></li>
-              <li><a className="hover:text-green-400" href="/reservation">Reserva</a></li>
-              <li><a className="hover:text-green-400" href="#">Menú</a></li>
+              <li><a className="hover:text-green-400" href="/create-reservations">Reserva</a></li>
+              <li><a className="hover:text-green-400" href="/create-menu">Menú</a></li>
               <li><a className="hover:text-green-400" href="#">Contacto</a></li>
             </ul>
           </div>

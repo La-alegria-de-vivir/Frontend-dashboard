@@ -88,7 +88,7 @@ const handleSignout = async () =>{
   }
 };
   return (
-<div className=" max-w-lg mx-auto p-3 w-full">
+<div className=" max-w-lg mx-auto p-3 w-full mt-20">
   <h1 className=' my-7 text-center font-semibold text-3xl'>Profile</h1>
   <form onSubmit={handleSubmit} className=' flex flex-col self-center gap-4'>
 
@@ -100,12 +100,12 @@ const handleSignout = async () =>{
     </Button>
     {
       currentUser.isAdmin && (
-        <Link to={'/createpost'}>
+        <Link to={'/menu'}>
         <Button
         type='button'
         className=' w-full bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold justify-center rounded transition-colors duration-300 h-8' 
         >
-          Create a post
+          Crear nuevo plato
 
         </Button>        
         </Link>

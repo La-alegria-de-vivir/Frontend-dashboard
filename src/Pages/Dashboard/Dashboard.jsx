@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import DashSidebar from '../../Components/DashSidebar/DashSidebar';
-import DashProfile from '../../Components/DashProfile/DashProfile';
+import DashSidebar from '../../Components/DashSidebar/DashSidebar.jsx';
+import DashProfile from '../../Components/DashProfile/DashProfile.jsx';
+import DashUsers from '../../Components/DashUsers/DashUsers.jsx';
+import DashMenu from '../../Components/DashMenu/DashMenu.jsx'
+import DashReservations from '../../Components/DashReservations/DashReservations.jsx'
 
-// import DashPosts from '../components/DashPosts';
-// import DashUsers from '../components/DashUsers';
-// import DashComments from '../components/DashComments';
 // import DashboardComponent from '../components/DashboardComponent';
 
 
@@ -27,12 +27,12 @@ export default function Dashboard() {
       </div>
         {/* profile... */}
         {tab === 'profile' && <DashProfile/>}
-        {/* post */}
-        {/* {tab === 'post' && <DashPosts/>} */}
+        {/* menu*/}
+        {tab === 'menu' && <DashMenu/>}
+        {/* reservations */}
+        {tab === 'reservations' && <DashReservations/>}
         {/* users */}
-        {/* {tab === 'users' && <DashUsers/>} */}
-        {/* commets */}
-        {/* {tab === 'comments' && <DashComments/>} */}
+        {tab === 'users' && <DashUsers/>}
         {/* dashboard component */}
         {/* {tab === 'dash' && <DashboardComponent/>} */}
     </div>
