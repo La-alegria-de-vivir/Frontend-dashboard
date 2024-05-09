@@ -1,5 +1,4 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home/Home.jsx';
 import Allergens from './Pages/Allergens/Allergens.jsx';
 import Navbar from './Components/Navbar/Navbar.jsx';
@@ -12,13 +11,12 @@ import PrivateRoute from './Components/PrivateRoute/PrivateRoute.jsx';
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute/OnlyAdminPrivateRoute.jsx';
 
 function App() {
-  const isAuthenticated = useSelector(state => state.user.isAuthenticated);
 
   return (
     <BrowserRouter>
       <Navbar/>
       <Routes>
-        <Route path='/' element={isAuthenticated ? <Navigate to="/dashboard" /> : <Home/>}/>
+        <Route path='/' element={<Home/>}/>
         <Route path='/alergenos' element={<Allergens/>}/>
         <Route element={<PrivateRoute/>}>
           <Route path='/dashboard' element={<Dashboard/>}/>
