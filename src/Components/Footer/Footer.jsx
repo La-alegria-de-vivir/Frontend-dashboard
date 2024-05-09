@@ -8,19 +8,10 @@ import { IoNewspaper } from "react-icons/io5";
 function Footer() {
   return (
     <div className=''>
-<footer className="bg-[#8C1111] text-white">
+<footer className="bg-[#AEAF50] text-white">
     <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex ">
           <div className="mb-6 md:mb-0">
-          <a className="text-3xl font-bold font-heading" href="/">
-              <img
-              src={logo}
-              width={50}
-              height={50}
-              className="rounded-full mr-4"
-              alt="Picture of the author"
-            />
-            </a>
           </div>
           <div className="grid grid-cols-4 gap-5 sm:gap-6 sm:grid-cols-3">
               <div className=' ml-10'>
