@@ -56,14 +56,14 @@ function Navbar() {
               <li><a className="hover:text-green-400" href="/">Inicio</a></li>
               <li><a className="hover:text-green-400" href="/alergenos">Alérgenos</a></li>
               <li><a className="hover:text-green-400" href="/reservation">Reserva</a></li>
-              <li><a className="hover:text-green-400" href="#">Sobre Nosotros</a></li>
+              <li><a className="hover:text-green-400" href="#">Menú</a></li>
               <li><a className="hover:text-green-400" href="#">Contacto</a></li>
             </ul>
             <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
               <li><a className="hover:text-green-400" href="/">Inicio</a></li>
               <li><a className="hover:text-green-400" href="/alergenos">Alérgenos</a></li>
               <li><a className="hover:text-green-400" href="/reservation">Reserva</a></li>
-              <li><a className="hover:text-green-400" href="#">Sobre Nosotros</a></li>
+              <li><a className="hover:text-green-400" href="#">Menú</a></li>
               <li><a className="hover:text-green-400" href="#">Contacto</a></li>
             </ul>
           </div>
