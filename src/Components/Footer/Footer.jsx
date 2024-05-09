@@ -1,5 +1,4 @@
 import React from 'react'
-import logo from '/logo.png';
 import { FaCalendarAlt } from "react-icons/fa";
 import { IoNewspaper } from "react-icons/io5";
 
