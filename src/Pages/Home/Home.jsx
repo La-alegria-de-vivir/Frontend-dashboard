@@ -9,7 +9,7 @@ import logo from '../../../public/images/logo.png'
 export default function Home() {
 
   const [formData, setFormData]= useState({});
-  const {loading,error: errorMessage} = useSelector(state => state.user);  
+  const {error: errorMessage} = useSelector(state => state.user);  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (e)=>{
@@ -36,7 +36,7 @@ const handleSubmit = async (e) =>{
 
     if (res.ok) {
       dispatch(signInSuccess(data));
-      navigate('/');
+      navigate('/dashboard');
     }
 
   } catch (error) {
