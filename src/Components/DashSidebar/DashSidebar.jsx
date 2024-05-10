@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { HiAnnotation, HiArrowSmRight, HiChartPie, HiDocumentText, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
+import { GiChefToque } from "react-icons/gi";
+import { MdOutlineRestaurantMenu } from "react-icons/md";
+import { MdTableRestaurant } from "react-icons/md";
+import { IoPeople } from "react-icons/io5";
+import { HiArrowSmRight } from "react-icons/hi";
 import { Link, useLocation } from 'react-router-dom';
 import { signoutSuccess } from '../Redux/User/userSlice.js';
 
@@ -36,24 +40,16 @@ export default function DashSidebar() {
   return (
     <div className='bg-gray-100 h-screen w-full md:w-56 flex flex-col justify-between mt-24'>
       <div className='flex flex-col gap-1'>
-        {/* {currentUser && currentUser.isAdmin && (
-          <Link to='/dashboard?tab=dash'>
-            <div className={`p-4 rounded ${tab === 'dash' || !tab ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}>
-              <HiChartPie className='inline-block mr-2' />
-              Dashboard
-            </div>
-          </Link>
-        )} */}
         <Link to='/dashboard?tab=profile'>
-          <div className={`p-4 rounded ${tab === 'profile' ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}>
-            <HiUser className='inline-block mr-2' />
+          <div className={`p-4 rounded ${tab === 'profile' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
+            <GiChefToque className='inline-block mr-2' />
             {currentUser.isAdmin ? 'Admin' : 'User'} Profile
           </div>
         </Link>
         {currentUser.isAdmin && (
           <Link to='/dashboard?tab=menu'>
-            <div className={`p-4 rounded ${tab === 'menu' ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}>
-              <HiDocumentText className='inline-block mr-2' />
+            <div className={`p-4 rounded ${tab === 'menu' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
+              <MdOutlineRestaurantMenu className='inline-block mr-2' />
               Menu
             </div>
           </Link>
@@ -62,14 +58,14 @@ export default function DashSidebar() {
           <>
             <div className='mt-1'> {/* Nuevo div con margen superior */}
               <Link to='/dashboard?tab=reservations'>
-                <div className={`p-4 rounded ${tab === 'reservations' ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}>
-                  <HiAnnotation className='inline-block mr-2' />
+                <div className={`p-4 rounded ${tab === 'reservations' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
+                  <MdTableRestaurant  className='inline-block mr-2' />
                   Reservations
                 </div>
               </Link>
             <Link to='/dashboard?tab=users'>
-              <div className={`p-4 rounded ${tab === 'users' ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'}`}>
-                <HiOutlineUserGroup className='inline-block mr-2' />
+              <div className={`p-4 rounded ${tab === 'users' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
+                <IoPeople className='inline-block mr-2' />
                 Users
               </div>
             </Link>
