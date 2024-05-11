@@ -89,7 +89,6 @@ const handleSubmit = async (e) =>{
               >
                 Sign In
               </Button>
-              <OAuth/>
             </form>
             <div className="flex flex-col items-center mt-5">
               <div className="flex gap-3 text-sm">
