@@ -17,7 +17,7 @@ export default function DashUsers() {
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
-          if (data.users.length < 9) {
+          if (data.users.length < 4) {
             setShowMore(false);
           }
         }
@@ -110,7 +110,7 @@ export default function DashUsers() {
                       }}
                       className='text-red-500 hover:underline cursor-pointer'
                     >
-                      Delete
+                      Borrar
                     </span>
                   </td>
                 </tr>
@@ -122,7 +122,7 @@ export default function DashUsers() {
               onClick={handleShowMore}
               className='w-full text-teal-500 self-center text-sm py-7'
             >
-              Show more
+              Mostrar más
             </button>
           )}
         </>

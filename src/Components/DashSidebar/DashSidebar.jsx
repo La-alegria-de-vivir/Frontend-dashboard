@@ -43,7 +43,7 @@ export default function DashSidebar() {
         <Link to='/dashboard?tab=profile'>
           <div className={`p-4 rounded ${tab === 'profile' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
             <GiChefToque className='inline-block mr-2' />
-            {currentUser.isAdmin ? 'Admin' : 'User'} Profile
+            {currentUser.isAdmin ? 'Admin' : 'User'} Perfil
           </div>
         </Link>
         {currentUser.isAdmin && (
@@ -60,18 +60,18 @@ export default function DashSidebar() {
               <Link to='/dashboard?tab=reservations'>
                 <div className={`p-4 rounded ${tab === 'reservations' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
                   <MdTableRestaurant  className='inline-block mr-2' />
-                  Reservations
+                  Reservas
                 </div>
               </Link>
             <Link to='/dashboard?tab=users'>
               <div className={`p-4 rounded ${tab === 'users' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
                 <IoPeople className='inline-block mr-2' />
-                Users
+                Usarios
               </div>
             </Link>
               <div className='p-4 rounded hover:bg-gray-200 cursor-pointer' onClick={handleSignout}>
                 <HiArrowSmRight className='inline-block mr-2' />
-                Sign Out
+                Salir
               </div>
             </div>
           </>

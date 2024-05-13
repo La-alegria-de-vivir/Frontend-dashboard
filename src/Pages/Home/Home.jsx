@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { signInStart, signInSuccess, signInFailure } from '../../Components/Redux/User/userSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
-import OAuth from '../../Components/Oauth/OAuth.jsx';
 import logo from '../../../public/images/logo.png'
 
 export default function Home() {
@@ -59,23 +58,23 @@ const handleSubmit = async (e) =>{
               />
             </Link>
             <p className='text-sm mt-5'>
-              This is a demo project. You can sign in with your email and password or with Google.
+              Disfruta de la Cocina Viva y en Constante Evolución!
             </p>
           </div>
           {/* right */}
           <div className="flex-1">
             <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
               <div>
-                <Label value='Your email'/>
+                <Label value='Correo electrónico'/>
                 <TextInput 
                   type='email'
-                  placeholder='name@company.com'
+                  placeholder='correo@correo.com'
                   id='email' 
                   onChange={handleChange}
                 />
               </div>
               <div>
-                <Label value='Your password'/>
+                <Label value='Contraseña'/>
                 <TextInput 
                   type='password'
                   placeholder='********'
@@ -92,7 +91,7 @@ const handleSubmit = async (e) =>{
             </form>
             <div className="flex flex-col items-center mt-5">
               <div className="flex gap-3 text-sm">
-                <span>Don't have an account?</span>
+                <span>No tienes una cuenta?</span>
                 <Link to='/signup' className='text-blue-500'>
                   Sign Up
                 </Link>

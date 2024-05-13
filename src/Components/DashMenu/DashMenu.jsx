@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function MenuComponent() {
   const [menus, setMenus] = useState([]);
@@ -59,70 +60,73 @@ export default function MenuComponent() {
 
   return (
     <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full'>
-      {menus.length > 0 ? (
-        <>
-          <table className='min-w-full divide-y divide-gray-200 shadow-md'>
-            <thead className='bg-gray-50'>
-              <tr>
-                <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                  Title
-                </th>
-                <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20]'>
-                  Description
-                </th>
-                <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                  Price
-                </th>
-                <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                  Image
-                </th>
-                <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className='bg-white divide-y divide-gray-200'>
-              {menus.map((menu) => (
-                <tr key={menu._id}>
-                  <td className='px-4 py-4 whitespace-nowrap'>{menu.title}</td>
-                  <td className='px-4 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis w-1/5 text-sm max-w-[10rem]'>{menu.description}</td>
-                  <td className='px-4 py-4 whitespace-nowrap'>{menu.price}€</td> {/* Agregar símbolo del euro */}
-                  <td className='px-4 py-4 whitespace-nowrap'><img src={menu.image} alt={menu.title} className="w-16 h-16" /></td>
-                  <td className='px-4 py-4 whitespace-nowrap'>
-                    <span
-                      onClick={() => {
-                        setShowModal(true);
-                        setMenuIdToDelete(menu._id);
-                      }}
-                      className='text-red-500 hover:underline cursor-pointer mr-4'
-                    >
-                      Delete
-                    </span>
-                    <span
-                      onClick={() => {
-                        // Aquí puedes manejar la lógica para actualizar el menú
-                      }}
-                      className='text-blue-500 hover:underline cursor-pointer'
-                    >
-                      Update
-                    </span>
-                  </td>
+      <div className="overflow-y-auto h-full">
+        {menus.length > 0 ? (
+          <>
+            <table className='min-w-full divide-y divide-gray-200 shadow-md'>
+              <thead className='bg-gray-50'>
+                <tr>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Título
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20]'>
+                    Descripción
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Precio
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Imagen
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Acciones
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {showMore && (
-            <button
-              onClick={handleShowMore}
-              className='w-full text-teal-500 self-center text-sm py-7'
-            >
-              Show more
-            </button>
-          )}
-        </>
-      ) : (
-        <p>You have no menus yet!</p>
-      )}
+              </thead>
+              <tbody className='bg-white divide-y divide-gray-200'>
+                {menus.map((menu) => (
+                  <tr key={menu._id}>
+                    <td className='px-4 py-4 whitespace-nowrap'>{menu.title}</td>
+                    <td className='px-4 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis w-1/5 text-sm max-w-[10rem]'>{menu.description}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{menu.price}€</td> {/* Agregar símbolo del euro */}
+                    <td className='px-4 py-4 whitespace-nowrap'><img src={menu.image} alt={menu.title} className="w-16 h-16" /></td>
+                    <td className='px-4 py-4 whitespace-nowrap'>
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setMenuIdToDelete(menu._id);
+                        }}
+                        className='text-red-500 hover:underline cursor-pointer mr-4'
+                      >
+                        Borrar
+                      </span>
+                      <span>
+                      <Link
+                      className='text-teal-500 hover:underline'
+                      to={`/update-menu/${menu._id}`}
+                      >
+                      <span>Actualizar</span>
+                       </Link>
+
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {showMore && (
+              <button
+                onClick={handleShowMore}
+                className='w-full text-teal-500 self-center text-sm py-7'
+              >
+                Mostar más
+              </button>
+            )}
+          </>
+        ) : (
+          <p>Aún no tienes ningún menú!</p>
+        )}
+      </div>
       {showModal && (
         <div className='fixed z-10 inset-0 overflow-y-auto'>
           <div className='flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>
@@ -138,7 +142,7 @@ export default function MenuComponent() {
                   </div>
                   <div className='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
                     <h3 className='text-lg leading-6 font-medium text-gray-900' id='modal-title'>
-                      Are you sure you want to delete this menu?
+                      ¿Seguro que quieres eliminar este plato?
                     </h3>
                   </div>
                 </div>
@@ -148,13 +152,13 @@ export default function MenuComponent() {
                   onClick={handleDeleteMenu}
                   className='w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm'
                 >
-                  Yes, I'm sure
+                  Si, estoy seguro
                 </button>
                 <button
                   onClick={() => setShowModal(false)}
                   className='mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm'
                 >
-                  No, cancel
+                  No, cancelar
                 </button>
               </div>
             </div>
@@ -164,4 +168,5 @@ export default function MenuComponent() {
     </div>
   );
 }
+
 

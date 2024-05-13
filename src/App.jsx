@@ -9,6 +9,7 @@ import Reservations from './Pages/Reservations/Reservations.jsx';
 import SignUp from './Pages/SignUp/SignUp.jsx';
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute.jsx';
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute/OnlyAdminPrivateRoute.jsx';
+import UpdateMenu from './Pages/UpdateMenu/UpdateMenu.jsx';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route element={<OnlyAdminPrivateRoute/>}>
           <Route path='/create-menu' element={<CreateMenu/>}/>
           <Route path='/create-reservations' element={<Reservations/>}/>
+          <Route path='/update-menu/:menuId' element={<UpdateMenu/>}/>
         </Route>
         <Route path='/signup' element={<SignUp/>}/>
       </Routes>
