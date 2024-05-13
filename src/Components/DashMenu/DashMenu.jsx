@@ -3,7 +3,7 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-export default function MenuComponent() {
+export default function DashMenu() {
   const [menus, setMenus] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);

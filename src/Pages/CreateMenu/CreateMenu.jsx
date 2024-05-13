@@ -125,7 +125,7 @@ export default function CreateMenu() {
             <option value='lácteos'>Lácteos</option>
           </Select>
         </div>
-        <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
+        <div className='flex gap-4 items-center justify-between border-4 border-[#BBBC4E] border-dotted p-3'>
           <FileInput
             type='file'
             accept='image/*'
