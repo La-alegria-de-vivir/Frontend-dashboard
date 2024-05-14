@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
-const UpdateReservations = () => {
+const UpdateReservations = ({ reservationId }) => {
     const [showModal, setShowModal] = useState(false);
     const [reservationData, setReservationData] = useState(null);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchReservationData = async () => {
+            try {
+                const response = await fetch(`api/reserve/${reservationId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setReservationData(data);
+                } else {
+                    throw new Error('Error al obtener datos de reserva');
+                }
+            } catch (error) {
+                console.error('Error al obtener datos de reserva:', error);
+                // Manejar el error de alguna manera
+            }
+        };
+
+        fetchReservationData();
+    }, [reservationId]);
+
     const handleSubmit = async (values) => {
         try {
-            const response = await fetch('api/reserve/create', {
-                method: 'POST',
+            const response = await fetch(`api/reserve/${reservationId}/update`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values)
             });
@@ -19,10 +38,10 @@ const UpdateReservations = () => {
                 setReservationData(values);
                 setShowModal(true);
             } else {
-                throw new Error('Error al crear reserva');
+                throw new Error('Error al actualizar reserva');
             }
         } catch (error) {
-            console.error('Error al crear reserva:', error);
+            console.error('Error al actualizar reserva:', error);
             // Puedes manejar el error de alguna manera
         }
     };
@@ -35,11 +54,11 @@ const UpdateReservations = () => {
     return (
         <div className="max-w-4xl mx-auto bg-white bg-opacity-75 p-6 rounded-lg shadow-md">
             <div>
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 mt-0 lg:mt-0 xl:mt-0 text-center" style={{ marginTop: '6rem' }}>Hacer <span className='text-[#BBBC4E]'>Reservas</span></h2>
+                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 mt-0 lg:mt-0 xl:mt-0 text-center" style={{ marginTop: '6rem' }}>Actualizar <span className='text-[#BBBC4E]'>Reserva</span></h2>
                 <div className="flex justify-center mt-8">
                     <aside className=" w-[23] p-4 ml-15">
                         <Formik
-                            initialValues={{
+                            initialValues={reservationData || {
                                 name: '',
                                 people: 1,
                                 place: 'Sala',
@@ -96,14 +115,12 @@ const UpdateReservations = () => {
                                             <Field type="time" id="hour" name="hour" className="w-full p-2 border border-gray-300 rounded-md" />
                                         </div>
                                     </div>
-                                    <button type="submit" className="bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold py-2 px-4 rounded-md col-span-2">Reservar</button>
+                                    <button type="submit" className="bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold py-2 px-4 rounded-md col-span-2">Actualizar Reserva</button>
                                 </Form>
                             )}
                         </Formik>
-                        <p className=' mt-4 text-center text-black font-bold'>Para grupos superiores a 10 personas contactar con el restaurante. Gracias</p>
-
+                        <p className=' mt-4 text-center text-black font-bold'>Para grupos superiores a 10 personas, contacta con el restaurante. Gracias</p>
                     </aside>
-                    
                 </div>
                 {/* Modal de confirmación */}
                 {showModal && (
@@ -122,7 +139,7 @@ const UpdateReservations = () => {
                                     <p><strong>Hora:</strong> {reservationData.hour}</p>
                                 </div>
                             </div>
-                            <p className="text-green-500 font-bold mt-4">¡Reserva realizada con éxito!</p>
+                            <p className="text-green-500 font-bold mt-4">¡Reserva actualizada con éxito!</p>
                             <div className="flex justify-center">
                                 <button onClick={handleCloseModal} className="bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold py-2 px-4 rounded-md mt-3">Cerrar</button>
                             </div>

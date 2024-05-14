@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 export default function DashReservation() {
   const [reservations, setReservations] = useState([]);
+  const [totalReservations, setTotalReservations] = useState(0);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [reservationIdToDelete, setReservationIdToDelete] = useState('');
@@ -22,6 +23,7 @@ export default function DashReservation() {
         if (data) {
           console.log("Reservas recibidas:", data);
           setReservations(data.slice(0, 5));
+          setTotalReservations(data.length);
           if (data.length <= 5) {
             setShowMore(false);
           }
@@ -43,7 +45,7 @@ export default function DashReservation() {
       const data = await res.json();
       if (res.ok) {
         setReservations((prev) => [...prev, ...data]);
-        if (data.length < 5) {
+        if (reservations.length + data.length >= totalReservations) {
           setShowMore(false);
         }
       }
@@ -189,4 +191,5 @@ export default function DashReservation() {
     </div>
   );
 }
+
 
