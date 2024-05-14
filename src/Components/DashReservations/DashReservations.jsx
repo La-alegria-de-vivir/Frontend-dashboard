@@ -20,23 +20,21 @@ export default function DashReservation() {
       console.log(data);
       if (res.ok) {
         if (data) {
-          console.log("Reservas recibidas:", data); // Agregamos un mensaje de depuración para verificar las reservas recibidas
+          console.log("Reservas recibidas:", data);
           setReservations(data.slice(0, 5));
           if (data.length <= 5) {
             setShowMore(false);
           }
         } else {
-          console.log("La respuesta de la API no contiene reservaciones:", data); // Agregamos un mensaje de depuración para el caso en que no haya reservas en la respuesta
+          console.log("La respuesta de la API no contiene reservaciones:", data);
         }
       } else {
-        console.log("Error al obtener las reservas:", res.status); // Agregamos un mensaje de depuración para manejar errores de la API
+        console.log("Error al obtener las reservas:", res.status);
       }
     } catch (error) {
-      console.log("Error en la solicitud de reservas:", error.message); // Manejamos errores de red o de análisis JSON
+      console.log("Error en la solicitud de reservas:", error.message);
     }
   };
-  
-  
 
   const handleShowMore = async () => {
     const startIndex = reservations.length;
@@ -44,9 +42,9 @@ export default function DashReservation() {
       const res = await fetch(`/api/reserve/getreservations?startIndex=${startIndex}`);
       const data = await res.json();
       if (res.ok) {
-        setReservations((prev) => [...prev, ...data]); // Concatenar nuevas reservaciones
+        setReservations((prev) => [...prev, ...data]);
         if (data.length < 5) {
-          setShowMore(false); // Ocultar botón "Mostrar más" si no hay más reservaciones
+          setShowMore(false);
         }
       }
     } catch (error) {
@@ -56,7 +54,7 @@ export default function DashReservation() {
 
   const handleDeleteReservation = async () => {
     try {
-      const res = await fetch(`/api/reserve/delete/${reservationIdToDelete}`, {
+      const res = await fetch(`/api/reserve/deletereservations/${reservationIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -66,6 +64,14 @@ export default function DashReservation() {
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -100,34 +106,33 @@ export default function DashReservation() {
                 </tr>
               </thead>
               <tbody className='bg-white divide-y divide-gray-200'>
-              {reservations.map((reservation) => (
-              <tr key={reservation._id}>
-                <td className='px-4 py-4 whitespace-nowrap'>{reservation.name}</td>
-                <td className='px-4 py-4 whitespace-nowrap'>{reservation.phoneNumber}</td>
-                <td className='px-4 py-4 whitespace-nowrap'>{reservation.hour}</td>
-                <td className='px-4 py-4 whitespace-nowrap'>{reservation.date}</td>
-                <td className='px-4 py-4 whitespace-nowrap'>{reservation.place}</td>
-                <td className='px-4 py-4 whitespace-nowrap'>{reservation.place}</td>
-                <td className='px-4 py-4 whitespace-nowrap'>
-                  <span
-                onClick={() => {
-          setShowModal(true);
-          setReservationIdToDelete(reservation._id);
-        }}
-        className='text-red-500 hover:underline cursor-pointer mr-4'
-      >
-        Borrar
-      </span>
-      <Link
-        className='text-teal-500 hover:underline'
-        to={`/update-reservation/${reservation._id}`}
-      >
-        Actualizar
-      </Link>
-    </td>
-  </tr>
-))}
-
+                {reservations.map((reservation) => (
+                  <tr key={reservation._id}>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.name}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.phoneNumber}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.hour}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{formatDate(reservation.date)}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.place}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.people}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setReservationIdToDelete(reservation._id);
+                        }}
+                        className='text-red-500 hover:underline cursor-pointer mr-4'
+                      >
+                        Borrar
+                      </span>
+                      <Link
+                        className='text-teal-500 hover:underline'
+                        to={`/update-reservation/${reservation._id}`}
+                      >
+                        Actualizar
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             {showMore && (
@@ -135,7 +140,7 @@ export default function DashReservation() {
                 onClick={handleShowMore}
                 className='w-full text-teal-500 self-center text-sm py-7'
               >
-                Mostar más
+                Mostrar más
               </button>
             )}
           </>
