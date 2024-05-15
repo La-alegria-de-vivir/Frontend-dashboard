@@ -11,6 +11,9 @@ import PrivateRoute from './Components/PrivateRoute/PrivateRoute.jsx';
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute/OnlyAdminPrivateRoute.jsx';
 import UpdateMenu from './Pages/UpdateMenu/UpdateMenu.jsx';
 import UpdateReservations from './Pages/UpdateReservations/UpdateReservations.jsx';
+import LegalWarning from './Pages/LegalWarning/LegalWarning.jsx';
+import CookiesPolicy from './Pages/CookiesPolicy/CookiesPolicy.jsx';
+import PrivacyPolicy from './Pages/PrivacyPolicy/PrivacyPolicy.jsx';
 
 function App() {
 
@@ -20,6 +23,9 @@ function App() {
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/alergenos' element={<Allergens/>}/>
+        <Route path='/legal-warning' element={<LegalWarning/>}/>
+        <Route path='/cookies-policy' element={<CookiesPolicy/>}/>
+        <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>
         <Route element={<PrivateRoute/>}>
           <Route path='/dashboard' element={<Dashboard/>}/>
         </Route>

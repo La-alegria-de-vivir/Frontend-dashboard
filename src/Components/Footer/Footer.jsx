@@ -41,13 +41,13 @@ function Footer() {
             <div className="w-full md:w-1/4">
               <ul className="text-white font-medium">
                 <li className="mb-4">
-                  <a href="#">Aviso Legal</a>
+                  <a href="legal-warning">Aviso Legal</a>
                 </li>
                 <li className="mb-4">
-                  <a href="#">Política de privacidad</a>
+                  <a href="privacy-policy">Política de privacidad</a>
                 </li>
                 <li className="mb-4">
-                  <a href="#">Política de cookies</a>
+                  <a href="cookies-policy">Política de cookies</a>
                 </li>
               </ul>
             </div>

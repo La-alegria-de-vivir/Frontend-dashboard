@@ -96,7 +96,7 @@ const handleSignout = async () =>{
     <TextInput type='email' id='email'placeholder='Correo electrónico' defaultValue={currentUser.email} onChange={handleChange}/>
     <TextInput type='password' id='password'placeholder='contraseña' onChange={handleChange}/>
     <Button type='submit'className=' w-full bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold justify-center rounded transition-colors duration-300 h-8'>
-      {loading ? 'Loading...' : 'Update'}
+      {loading ? 'Loading...' : 'Actualizar'}
     </Button>
     {
       currentUser.isAdmin && (
