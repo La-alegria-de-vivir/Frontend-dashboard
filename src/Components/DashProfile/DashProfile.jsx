@@ -89,18 +89,18 @@ const handleSignout = async () =>{
 };
   return (
 <div className=" max-w-lg mx-auto p-3 w-full mt-20">
-  <h1 className=' my-7 text-center font-semibold text-3xl'>Profile</h1>
+  <h1 className=' my-7 text-center font-semibold text-3xl'>Perfil</h1>
   <form onSubmit={handleSubmit} className=' flex flex-col self-center gap-4'>
 
-    <TextInput type='text' id='username'placeholder='username' defaultValue={currentUser.username} onChange={handleChange}/>
-    <TextInput type='email' id='email'placeholder='email' defaultValue={currentUser.email} onChange={handleChange}/>
-    <TextInput type='password' id='password'placeholder='password' onChange={handleChange}/>
+    <TextInput type='text' id='username'placeholder='Nombre usuario' defaultValue={currentUser.username} onChange={handleChange}/>
+    <TextInput type='email' id='email'placeholder='Correo electrónico' defaultValue={currentUser.email} onChange={handleChange}/>
+    <TextInput type='password' id='password'placeholder='contraseña' onChange={handleChange}/>
     <Button type='submit'className=' w-full bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold justify-center rounded transition-colors duration-300 h-8'>
       {loading ? 'Loading...' : 'Update'}
     </Button>
     {
       currentUser.isAdmin && (
-        <Link to={'/menu'}>
+        <Link to={'/create-menu'}>
         <Button
         type='button'
         className=' w-full bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold justify-center rounded transition-colors duration-300 h-8' 
@@ -114,8 +114,8 @@ const handleSignout = async () =>{
     }
   </form>
   <div className=" text-red-500 flex justify-between mt-5">
-    <span onClick={()=>setShowModal(true)} className=' cursor-pointer'>Delete Acount</span>
-    <span onClick={handleSignout} className=' cursor-pointer'>Sign Out</span>
+    <span onClick={()=>setShowModal(true)} className=' cursor-pointer'>Borrar cuenta</span>
+    <span onClick={handleSignout} className=' cursor-pointer'>Salir</span>
   </div>
 {updateUserSuccess && (
   <Alert color='success' className= 'me-5'>
@@ -145,13 +145,13 @@ const handleSignout = async () =>{
     <ModalBody>
       <div className="text-center mt-20">
         <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto'/>
-        <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>Are you sure you want to delete your account?</h3>
+        <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>¿Estás seguro que quieres borrar la cuenta?</h3>
         <div className=" flex justify-center gap-6">
           <Button color='black' onClick={handleDeleteUser}>
-            Yes, I'm sure
+            Si, estoy segura
           </Button>
           <Button color='gray' onClick={() => setShowModal(false)}>
-            No, cancel
+            No, cancelar
           </Button>
         </div>
       </div>

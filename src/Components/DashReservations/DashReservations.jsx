@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 export default function DashReservation() {
@@ -9,10 +9,11 @@ export default function DashReservation() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [reservationIdToDelete, setReservationIdToDelete] = useState('');
+  const [sortBy, setSortBy] = useState({ field: '', order: 'asc' });
 
   useEffect(() => {
     fetchReservations();
-  }, []);
+  }, [sortBy]); // Agregar sortBy como dependencia para que se vuelva a ordenar al cambiar
 
   const fetchReservations = async () => {
     try {
@@ -22,8 +23,29 @@ export default function DashReservation() {
       if (res.ok) {
         if (data) {
           console.log("Reservas recibidas:", data);
-          setReservations(data.slice(0, 5));
-          setTotalReservations(data.length);
+          // Ordenar las reservaciones por fecha y hora de mayor a menor
+          const sortedData = data.sort((a, b) => {
+            // Convertir las fechas a objetos Date
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            if (sortBy.field === 'date') {
+              // Ordenar por fecha
+              if (sortBy.order === 'asc') {
+                return dateA - dateB;
+              } else {
+                return dateB - dateA;
+              }
+            } else if (sortBy.field === 'hour') {
+              // Ordenar por hora
+              if (dateA.getTime() === dateB.getTime()) {
+                return sortBy.order === 'asc' ? dateA.getHours() - dateB.getHours() : dateB.getHours() - dateA.getHours();
+              } else {
+                return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
+              }
+            }
+          });
+          setReservations(sortedData.slice(0, 5));
+          setTotalReservations(sortedData.length);
           if (data.length <= 5) {
             setShowMore(false);
           }
@@ -76,6 +98,14 @@ export default function DashReservation() {
     return `${day}/${month}/${year}`;
   };
 
+  const handleSortBy = (field) => {
+    if (sortBy.field === field) {
+      setSortBy({ ...sortBy, order: sortBy.order === 'asc' ? 'desc' : 'asc' });
+    } else {
+      setSortBy({ field, order: 'asc' });
+    }
+  };
+
   return (
     <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full'>
       <div className="overflow-y-auto h-full">
@@ -92,9 +122,23 @@ export default function DashReservation() {
                   </th>
                   <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
                     Hora
+                    <button onClick={() => handleSortBy('hour')} className='inline-block ml-1'>
+                      {sortBy.field === 'hour' && sortBy.order === 'asc' ? (
+                        <FaArrowUp />
+                      ) : (
+                        <FaArrowDown />
+                      )}
+                    </button>
                   </th>
                   <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
                     Fecha
+                    <button onClick={() => handleSortBy('date')} className='inline-block ml-1'>
+                      {sortBy.field === 'date' && sortBy.order === 'asc' ? (
+                        <FaArrowUp />
+                      ) : (
+                        <FaArrowDown />
+                      )}
+                    </button>
                   </th>
                   <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
                     Lugar
@@ -128,7 +172,7 @@ export default function DashReservation() {
                       </span>
                       <Link
                         className='text-teal-500 hover:underline'
-                        to={`/update-reservation/${reservation._id}`}
+                        to={`/update-reservation/reserve/${reservation._id}`}
                       >
                         Actualizar
                       </Link>
@@ -191,5 +235,3 @@ export default function DashReservation() {
     </div>
   );
 }
-
-

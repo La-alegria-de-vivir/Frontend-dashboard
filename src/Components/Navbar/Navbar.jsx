@@ -1,11 +1,31 @@
-'use client'
-
 import React, { useState } from 'react';
-import logo from '../../../public/images/logo.png'
-
+import logo from '../../../public/images/logo.png';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  // Lógica para determinar si el usuario está autenticado...
+  const isAuthenticated = true; // Reemplaza esto con tu lógica real
+
+  // Función para manejar el clic en el logo
+  const handleLogoClick = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard?tab=profile');
+    } else {
+      navigate('/');
+    }
+  };
+
+  // Función para manejar el clic en el enlace de "Inicio"
+  const handleInicioClick = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard?tab=profile');
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <div className="fixed top-0 w-full z-50 bg-white text-black">
@@ -13,7 +33,8 @@ function Navbar() {
         {/* Navbar */}
         <nav className="flex justify-between">
           <div className="px-5 xl:px-12 py-6 flex w-full items-center">
-            <a className="text-3xl font-bold font-heading" href="/">
+            {/* Logo */}
+            <a className="text-3xl font-bold font-heading" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
               <img
                 src={logo}
                 width={50}
@@ -53,16 +74,16 @@ function Navbar() {
             </button>
             {/* Nav Links */}
             <ul className={`${menuOpen ? 'flex flex-col w-screen items-center space-y-4' : 'hidden'} md:hidden`}>
-              <li><a className="hover:text-[#BBBC4E]" href="/">Inicio</a></li>
-              <li><a className="hover:text-[#BBBC4E]" href="/alergenos">Alérgenos</a></li>
-              <li><a className="hover:text-[#BBBC4E]" href="/create-menu">Menú</a></li>
-              <li><a className="hover:text-[#BBBC4E]" href="#">Contacto</a></li>
+              <li><a className="hover:text-[#BBBC4E] cursor-pointer" onClick={handleInicioClick}>Inicio</a></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="/alergenos">Alérgenos</Link></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="/create-menu">Menú</Link></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="#">Contacto</Link></li>
             </ul>
             <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
-              <li><a className="hover:text-[#BBBC4E]" href="/">Inicio</a></li>
-              <li><a className="hover:text-[#BBBC4E]" href="/alergenos">Alérgenos</a></li>
-              <li><a className="hover:text-[#BBBC4E]" href="/create-menu">Menú</a></li>
-              <li><a className="hover:text-[#BBBC4E]" href="#">Contacto</a></li>
+              <li><a className="hover:text-[#BBBC4E] cursor-pointer" onClick={handleInicioClick}>Inicio</a></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="/alergenos">Alérgenos</Link></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="/create-menu">Menú</Link></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="#">Contacto</Link></li>
             </ul>
           </div>
         </nav>

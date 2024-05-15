@@ -1,8 +1,8 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import OAuth from '../../Components/Oauth/OAuth.jsx';
 import logo from '../../../public/images/logo.png'
+import '../Home/Home.css'
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -52,38 +52,37 @@ export default function SignUp() {
             alt="Logo"
               />
           </Link>
-          <p className='text-sm mt-5'>
-            This is a demo project. You can sign up with your email and password
-            or with Google.
-          </p>
+          <p className=' text-md mt-5 '>
+              Disfruta de la Cocina Viva y en Constante Evolución!
+            </p>
         </div>
         {/* right */}
 
-        <div className='flex-1'>
+        <div className='flex-1 bg-white bg-opacity-75 p-6 rounded-lg shadow-md'>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
-              <Label value='Your username' />
+              <Label value='Nombre de usuario' />
               <TextInput
                 type='text'
-                placeholder='Username'
+                placeholder='Nombre de usuario'
                 id='username'
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label value='Your email' />
+              <Label value='Correo electrónico' />
               <TextInput
                 type='email'
-                placeholder='name@company.com'
+                placeholder='correo@correo.com'
                 id='email'
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label value='Your password' />
+              <Label value='Contraseña' />
               <TextInput
                 type='password'
-                placeholder='Password'
+                placeholder='******'
                 id='password'
                 onChange={handleChange}
               />
@@ -92,13 +91,13 @@ export default function SignUp() {
                 className='bg-gradient-to-r from-[#AEAF50] to-[#F3C14C] hover:from-[#adaf50bd] hover:to-[#F3C14C] text-white font-bold justify-center rounded transition-colors duration-300 h-8' 
                 type='submit' 
               >
-                Sign Up
+                Registrarse
               </Button>
           </form>
           <div className='flex gap-2 text-sm mt-5'>
-            <span>Have an account?</span>
+            <span>¿Tienes una cuenta?</span>
             <Link to='/' className='text-blue-500'>
-              Sign In
+              Inicia sesión
             </Link>
           </div>
           {errorMessage && (

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './Pages/Home/Home.jsx';
 import Allergens from './Pages/Allergens/Allergens.jsx';
 import Navbar from './Components/Navbar/Navbar.jsx';
@@ -27,9 +27,11 @@ function App() {
           <Route path='/create-menu' element={<CreateMenu/>}/>
           <Route path='/create-reservations' element={<Reservations/>}/>
           <Route path='/update-menu/:menuId' element={<UpdateMenu/>}/>
-          <Route path='/update-reservation/:reservationsId' element={<UpdateReservations/>}/>
+          <Route path='/update-reservation/reserve/:reservationId' element={<UpdateReservations/>}/>
         </Route>
         <Route path='/signup' element={<SignUp/>}/>
+        {/* Redirige desde / a /dashboard?tab=profile */}
+        <Route path="/" element={<Navigate to="/dashboard?tab=profile" />} />
       </Routes>
       <Footer/>
     </BrowserRouter>
@@ -37,3 +39,4 @@ function App() {
 }
 
 export default App;
+
