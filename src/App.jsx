@@ -31,7 +31,7 @@ function App() {
         </Route>
         <Route element={<OnlyAdminPrivateRoute/>}>
           <Route path='/create-menu' element={<CreateMenu/>}/>
-          <Route path='/create-reservations' element={<Reservations/>}/>
+          <Route path='/reservations' element={<Reservations/>}/>
           <Route path='/update-menu/:menuId' element={<UpdateMenu/>}/>
           <Route path='/update-reservation/reserve/:reservationId' element={<UpdateReservations/>}/>
         </Route>

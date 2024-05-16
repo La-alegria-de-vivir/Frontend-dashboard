@@ -35,14 +35,14 @@ function Navbar() {
           <div className="px-5 xl:px-12 py-6 flex w-full items-center">
             {/* Logo */}
             <a className="text-3xl font-bold font-heading" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
-              <img
-                src={logo}
-                width={50}
-                height={50}
-                className="rounded-full"
-                alt="Logo"
-              />
-            </a>
+  <img
+    src={logo}
+    style={{ width: '50px', height: 'auto' }} // Establece el ancho deseado y deja que la altura se ajuste automáticamente
+    className=""
+    alt="Logo"
+  />
+</a>
+
             {/* Menu Hamburguesa */}
             <button
               className="md:hidden text-xl focus:outline-none"
@@ -76,12 +76,14 @@ function Navbar() {
             <ul className={`${menuOpen ? 'flex flex-col w-screen items-center space-y-4' : 'hidden'} md:hidden`}>
               <li><a className="hover:text-[#BBBC4E] cursor-pointer" onClick={handleInicioClick}>Inicio</a></li>
               <li><Link className="hover:text-[#BBBC4E]" to="/alergenos">Alérgenos</Link></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="/reservations">Reservaa</Link></li>
               <li><Link className="hover:text-[#BBBC4E]" to="/create-menu">Menú</Link></li>
               <li><Link className="hover:text-[#BBBC4E]" to="#">Contacto</Link></li>
             </ul>
             <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
               <li><a className="hover:text-[#BBBC4E] cursor-pointer" onClick={handleInicioClick}>Inicio</a></li>
               <li><Link className="hover:text-[#BBBC4E]" to="/alergenos">Alérgenos</Link></li>
+              <li><Link className="hover:text-[#BBBC4E]" to="/reservations">Reservas</Link></li>
               <li><Link className="hover:text-[#BBBC4E]" to="/create-menu">Menú</Link></li>
               <li><Link className="hover:text-[#BBBC4E]" to="#">Contacto</Link></li>
             </ul>
