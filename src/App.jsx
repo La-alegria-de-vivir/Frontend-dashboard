@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './Pages/Home/Home.jsx';
-import Allergens from './Pages/Allergens/Allergens.jsx';
 import Navbar from './Components/Navbar/Navbar.jsx';
 import Footer from './Components/Footer/Footer.jsx';
 import Dashboard from './Pages/Dashboard/Dashboard.jsx';
@@ -22,7 +21,6 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/alergenos' element={<Allergens/>}/>
         <Route path='/legal-warning' element={<LegalWarning/>}/>
         <Route path='/cookies-policy' element={<CookiesPolicy/>}/>
         <Route path='/privacy-policy' element={<PrivacyPolicy/>}/>

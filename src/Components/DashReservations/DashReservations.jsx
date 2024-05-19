@@ -4,6 +4,8 @@ import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { MdOutlineRestaurant } from "react-icons/md";
 import { IoRestaurantSharp } from "react-icons/io5";
+import { MdDelete } from "react-icons/md";
+import { PiPencilSimpleLineFill } from "react-icons/pi";
 
 
 
@@ -13,7 +15,7 @@ export default function DashReservation() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [reservationIdToDelete, setReservationIdToDelete] = useState('');
-  const [sortBy, setSortBy] = useState({ field: '', order: 'asc' });
+  const [sortBy, setSortBy] = useState({ field: 'hour', order: 'desc' });
 
   useEffect(() => {
     fetchReservations();
@@ -26,26 +28,13 @@ export default function DashReservation() {
 
       if (res.ok) {
         if (data) {
-          const sortedData = data.sort((a, b) => {
-            const dateA = new Date(a.date);
-            const dateB = new Date(b.date);
-            if (sortBy.field === 'date') {
-              return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-            } else if (sortBy.field === 'hour') {
-              if (dateA.getTime() === dateB.getTime()) {
-                return sortBy.order === 'asc' ? a.hour.localeCompare(b.hour) : b.hour.localeCompare(a.hour);
-              } else {
-                return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-              }
-            }
-            return 0;
-          });
+          const currentDate = new Date().toISOString().slice(0, 10); // Obtiene la fecha actual en formato YYYY-MM-DD
+          const filteredData = data.filter(reservation => reservation.date.slice(0, 10) === currentDate); // Filtra las reservas por la fecha actual
+          const sortedData = sortData(filteredData);
 
-          setReservations(sortedData.slice(0, 5));
+          setReservations(sortedData.slice(0, 7));
           setTotalReservations(sortedData.length);
-          if (data.length <= 5) {
-            setShowMore(false);
-          }
+          setShowMore(filteredData.length > 7);
         } else {
           console.log("La respuesta de la API no contiene reservaciones:", data);
         }
@@ -63,26 +52,17 @@ export default function DashReservation() {
       const res = await fetch(`/api/reserve/getreservations?startIndex=${startIndex}`);
       const newData = await res.json();
       if (res.ok) {
-        const allData = [...reservations, ...newData];
-        const sortedData = allData.sort((a, b) => {
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          if (sortBy.field === 'date') {
-            return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-          } else if (sortBy.field === 'hour') {
-            if (dateA.getTime() === dateB.getTime()) {
-              return sortBy.order === 'asc' ? a.hour.localeCompare(b.hour) : b.hour.localeCompare(a.hour);
-            } else {
-              return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-            }
-          }
-          return 0;
+        const currentDate = new Date().toISOString().slice(0, 10); // Obtiene la fecha actual en formato YYYY-MM-DD
+        const filteredData = newData.filter(reservation => reservation.date.slice(0, 10) === currentDate); // Filtra las reservas por la fecha actual
+        const allData = [...reservations, ...filteredData];
+        const uniqueData = Array.from(new Set(allData.map(r => r._id))).map(id => {
+          return allData.find(r => r._id === id);
         });
+        const sortedData = sortData(uniqueData);
+
         setReservations(sortedData);
         setTotalReservations(sortedData.length);
-        if (sortedData.length >= totalReservations) {
-          setShowMore(false);
-        }
+        setShowMore(filteredData.length > 0); // Mostrar el botón solo si hay más reservas
       }
     } catch (error) {
       console.log(error.message);
@@ -142,8 +122,20 @@ export default function DashReservation() {
     if (sortBy.field === field) {
       setSortBy({ ...sortBy, order: sortBy.order === 'asc' ? 'desc' : 'asc' });
     } else {
-      setSortBy({ field, order: 'asc' });
+      setSortBy({ field, order: 'desc' });
     }
+  };
+
+  const sortData = (data) => {
+    return data.sort((a, b) => {
+      if (sortBy.field === 'hour') {
+        // Ordena por hora de la más reciente a la más antigua
+        const hourA = parseInt(a.hour.split(':')[0]);
+        const hourB = parseInt(b.hour.split(':')[0]);
+        return sortBy.order === 'asc' ? hourA - hourB : hourB - hourA;
+      }
+      return 0;
+    });
   };
 
   return (
@@ -151,86 +143,79 @@ export default function DashReservation() {
       <div className="overflow-y-auto h-full">
         {reservations.length > 0 ? (
           <>
-<table className='min-w-full divide-y divide-gray-200 shadow-md'>
-  <thead className='bg-gray-50'>
-    <tr>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Nombre
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Teléfono
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Hora
-        <button onClick={() => handleSortBy('hour')} className='inline-block ml-1'>
-          {sortBy.field === 'hour' && sortBy.order === 'asc' ? (
-            <FaArrowUp />
-          ) : (
-            <FaArrowDown />
-          )}
-        </button>
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Fecha
-        <button onClick={() => handleSortBy('date')} className='inline-block ml-1'>
-          {sortBy.field === 'date' && sortBy.order === 'asc' ? (
-            <FaArrowUp />
-          ) : (
-            <FaArrowDown />
-          )}
-        </button>
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Lugar
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Comensales
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Estado
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Acciones
-      </th>
-    </tr>
-  </thead>
-  <tbody className='bg-white divide-y divide-gray-200'>
-    {reservations.map((reservation) => (
-      <tr key={reservation._id}>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.name}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.phoneNumber}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.hour}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{formatDate(reservation.date)}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.place}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.people}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>
-          {!reservation.completed ? (
-            <MdOutlineRestaurant className='text-green-500 hover:underline cursor-pointer mr-4' onClick={() => handleMarkAsCompleted(reservation._id)} />
-          ) : (
-            <IoRestaurantSharp className='text-red-500' />
-          )}
-        </td>
-        <td className='px-4 py-4 whitespace-nowrap'>
-          <span
-            onClick={() => {
-              setShowModal(true);
-              setReservationIdToDelete(reservation._id);
-            }}
-            className='text-red-500 hover:underline cursor-pointer ml-4'
-          >
-            Borrar
-          </span>
-          <Link
-            className='text-teal-500 hover:underline ml-4'
-            to={`/update-reservation/reserve/${reservation._id}`}
-          >
-            Actualizar
-          </Link>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+            <table className='min-w-full divide-y divide-gray-200 shadow-md'>
+              <thead className='bg-gray-50'>
+                <tr>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Nombre
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Teléfono
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Hora
+                    <button onClick={() => handleSortBy('hour')} className='inline-block ml-1'>
+                      {sortBy.order === 'asc' ? (
+                        <FaArrowUp />
+                      ) : (
+                        <FaArrowDown />
+                      )}
+                    </button>
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Fecha
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Lugar
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Comensales
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Estado
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className='bg-white divide-y divide-gray-200'>
+                {reservations.map((reservation) => (
+                  <tr key={reservation._id}>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.name}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.phoneNumber}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.hour}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{formatDate(reservation.date)}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.place}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>{reservation.people}</td>
+                    <td className='px-4 py-4 whitespace-nowrap'>
+                      {!reservation.completed ? (
+                        <MdOutlineRestaurant className='text-green-500 hover:underline cursor-pointer mr-4' onClick={() => handleMarkAsCompleted(reservation._id)} />
+                      ) : (
+                        <IoRestaurantSharp className='text-red-500' />
+                      )}
+                    </td>
+                    <td className='px-4 py-4 whitespace-nowrap flex'>
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setReservationIdToDelete(reservation._id);
+                        }}
+                        className='text-red-500 hover:underline cursor-pointer ml-4'
+                      >
+                        <MdDelete />
+                      </span>
+                      <Link
+                        className='text-teal-500 hover:underline ml-4'
+                        to={`/update-reservation/reserve/${reservation._id}`}
+                      >
+                        <PiPencilSimpleLineFill />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
             {showMore && (
               <button

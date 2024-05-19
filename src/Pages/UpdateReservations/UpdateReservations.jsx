@@ -32,7 +32,7 @@ const UpdateReservations = () => {
         values.date = new Date(values.date).toISOString().split('T')[0];
     
         try {
-            const response = await fetch(`/api/reserve/update-revervations/${reservationId}`, {
+            const response = await fetch(`/api/reserve/update-reservations/${reservationId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values)
@@ -53,6 +53,7 @@ const UpdateReservations = () => {
         } catch (error) {
             console.error('Error al actualizar reserva:', error);
         }
+        
     };
     
     
