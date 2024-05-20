@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 import { MdOutlineRestaurant } from "react-icons/md";
 import { IoRestaurantSharp } from "react-icons/io5";
 
-
-
 export default function Reservation() {
   const [reservations, setReservations] = useState([]);
   const [totalReservations, setTotalReservations] = useState(0);
@@ -14,14 +12,16 @@ export default function Reservation() {
   const [showModal, setShowModal] = useState(false);
   const [reservationIdToDelete, setReservationIdToDelete] = useState('');
   const [sortBy, setSortBy] = useState({ field: '', order: 'asc' });
+  const [searchName, setSearchName] = useState('');
 
   useEffect(() => {
     fetchReservations();
-  }, [sortBy]);
+  }, [sortBy, searchName]);
 
   const fetchReservations = async () => {
     try {
-      const res = await fetch(`/api/reserve/getreservations`);
+      const url = searchName ? `/api/reserve/getreservations?name=${searchName}` : '/api/reserve/getreservations';
+      const res = await fetch(url);
       const data = await res.json();
 
       if (res.ok) {
@@ -60,7 +60,8 @@ export default function Reservation() {
   const handleShowMore = async () => {
     const startIndex = reservations.length;
     try {
-      const res = await fetch(`/api/reserve/getreservations?startIndex=${startIndex}`);
+      const url = searchName ? `/api/reserve/getreservations?startIndex=${startIndex}&name=${searchName}` : `/api/reserve/getreservations?startIndex=${startIndex}`;
+      const res = await fetch(url);
       const newData = await res.json();
       if (res.ok) {
         const allData = [...reservations, ...newData];
@@ -146,6 +147,24 @@ export default function Reservation() {
     }
   };
 
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(`/api/reservations?name=${searchName}`);
+      if (!response.ok) {
+        throw new Error('No se pudo completar la solicitud');
+      }
+      const data = await response.json();
+      setReservations(data);
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    setSearchName(e.target.value);
+    handleSearch(); // Realizar búsqueda automáticamente mientras el usuario escribe
+  };
+
   return (
     <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full'>
       <div className="overflow-y-auto h-full">
@@ -155,7 +174,13 @@ export default function Reservation() {
   <thead className='bg-gray-50'>
     <tr>
       <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Nombre
+        <input
+          type="text"
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          placeholder="Buscar por nombre"
+          className="mt-2 p-1 border border-gray-300 rounded-md"
+        />
       </th>
       <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
         Teléfono
