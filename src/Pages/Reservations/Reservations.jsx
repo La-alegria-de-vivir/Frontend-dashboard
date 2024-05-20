@@ -3,91 +3,75 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { MdOutlineRestaurant } from "react-icons/md";
-import { IoRestaurantSharp } from "react-icons/io5";
+import { PiPencilSimpleLineFill } from "react-icons/pi";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
 export default function Reservation() {
   const [reservations, setReservations] = useState([]);
   const [totalReservations, setTotalReservations] = useState(0);
-  const [showMore, setShowMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [reservationIdToDelete, setReservationIdToDelete] = useState('');
   const [sortBy, setSortBy] = useState({ field: '', order: 'asc' });
   const [searchName, setSearchName] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     fetchReservations();
-  }, [sortBy, searchName]);
+  }, [sortBy, searchName, currentPage, selectedDate]);
 
-  const fetchReservations = async () => {
-    try {
-      const url = searchName ? `/api/reserve/getreservations?name=${searchName}` : '/api/reserve/getreservations';
-      const res = await fetch(url);
-      const data = await res.json();
+// Define la función como async
+const fetchReservations = async () => {
+  try {
+    const startIndex = (currentPage - 1) * 7; // Calcula el índice de inicio basado en la página actual
+    let url = `/api/reserve/getTotalReservations?startIndex=${startIndex}&limit=7`; // Usa startIndex y limit variables
 
-      if (res.ok) {
-        if (data) {
-          const sortedData = data.sort((a, b) => {
-            const dateA = new Date(a.date);
-            const dateB = new Date(b.date);
-            if (sortBy.field === 'date') {
-              return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-            } else if (sortBy.field === 'hour') {
-              if (dateA.getTime() === dateB.getTime()) {
-                return sortBy.order === 'asc' ? a.hour.localeCompare(b.hour) : b.hour.localeCompare(a.hour);
-              } else {
-                return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-              }
-            }
-            return 0;
-          });
+    const res = await fetch(url);
+    const data = await res.json();
 
-          setReservations(sortedData.slice(0, 5));
-          setTotalReservations(sortedData.length);
-          if (data.length <= 5) {
-            setShowMore(false);
-          }
-        } else {
-          console.log("La respuesta de la API no contiene reservaciones:", data);
-        }
+    if (res.ok) {
+      if (data && data.reservations) { // Verifica si hay reservas en la respuesta
+        setReservations(data.reservations);
+        setTotalReservations(data.totalReservations);
+        console.log("Reservations fetched:", data); // Debug log
       } else {
-        console.log("Error al obtener las reservas:", res.status);
+        console.log("La respuesta de la API no contiene reservaciones:", data);
       }
-    } catch (error) {
-      console.log("Error en la solicitud de reservas:", error.message);
+    } else {
+      console.log("Error al obtener las reservas:", res.status);
     }
+  } catch (error) {
+    console.log("Error en la solicitud de reservas:", error.message);
+  }
+};
+
+
+
+
+const getTotalReservations = async (req, res) => {
+  try {
+    const totalReservations = await Reservation.find().count();
+    res.status(200).json(totalReservations);
+  } catch (error) {
+    console.error("Error fetching total reservations:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+  
+  
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    console.log('Fecha seleccionada:', date);
   };
 
-  const handleShowMore = async () => {
-    const startIndex = reservations.length;
-    try {
-      const url = searchName ? `/api/reserve/getreservations?startIndex=${startIndex}&name=${searchName}` : `/api/reserve/getreservations?startIndex=${startIndex}`;
-      const res = await fetch(url);
-      const newData = await res.json();
-      if (res.ok) {
-        const allData = [...reservations, ...newData];
-        const sortedData = allData.sort((a, b) => {
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          if (sortBy.field === 'date') {
-            return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-          } else if (sortBy.field === 'hour') {
-            if (dateA.getTime() === dateB.getTime()) {
-              return sortBy.order === 'asc' ? a.hour.localeCompare(b.hour) : b.hour.localeCompare(a.hour);
-            } else {
-              return sortBy.order === 'asc' ? dateA - dateB : dateB - dateA;
-            }
-          }
-          return 0;
-        });
-        setReservations(sortedData);
-        setTotalReservations(sortedData.length);
-        if (sortedData.length >= totalReservations) {
-          setShowMore(false);
-        }
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
+  const totalPages = Math.ceil(totalReservations / 7); // Calcular total de páginas
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber); // Actualizar el estado currentPage al hacer clic en los botones de paginación
   };
 
   const handleDeleteReservation = async () => {
@@ -131,12 +115,14 @@ export default function Reservation() {
     }
   };
 
+
+
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    if (!dateString) {
+      console.error('Error: dateString is empty');
+      return null; // Otra acción apropiada para manejar el error
+    }
+    return new Date(dateString).toLocaleDateString(); // Convertir a cadena legible para humanos
   };
 
   const handleSortBy = (field) => {
@@ -147,22 +133,9 @@ export default function Reservation() {
     }
   };
 
-  const handleSearch = async () => {
-    try {
-      const response = await fetch(`/api/reservations?name=${searchName}`);
-      if (!response.ok) {
-        throw new Error('No se pudo completar la solicitud');
-      }
-      const data = await response.json();
-      setReservations(data);
-    } catch (error) {
-      console.error("Error fetching reservations:", error);
-    }
-  };
-
   const handleChange = (e) => {
-    setSearchName(e.target.value);
-    handleSearch(); // Realizar búsqueda automáticamente mientras el usuario escribe
+    const name = e.target.value;
+    setSearchName(name);
   };
 
   return (
@@ -170,145 +143,127 @@ export default function Reservation() {
       <div className="overflow-y-auto h-full">
         {reservations.length > 0 ? (
           <>
-<table className='min-w-full divide-y divide-gray-200 shadow-md'>
-  <thead className='bg-gray-50'>
-    <tr>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        <input
-          type="text"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Buscar por nombre"
-          className="mt-2 p-1 border border-gray-300 rounded-md"
-        />
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Teléfono
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Hora
-        <button onClick={() => handleSortBy('hour')} className='inline-block ml-1'>
-          {sortBy.field === 'hour' && sortBy.order === 'asc' ? (
-            <FaArrowUp />
-          ) : (
-            <FaArrowDown />
-          )}
-        </button>
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Fecha
-        <button onClick={() => handleSortBy('date')} className='inline-block ml-1'>
-          {sortBy.field === 'date' && sortBy.order === 'asc' ? (
-            <FaArrowUp />
-          ) : (
-            <FaArrowDown />
-          )}
-        </button>
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Lugar
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Comensales
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Estado
-      </th>
-      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-        Acciones
-      </th>
-    </tr>
-  </thead>
-  <tbody className='bg-white divide-y divide-gray-200'>
-    {reservations.map((reservation) => (
-      <tr key={reservation._id}>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.name}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.phoneNumber}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.hour}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{formatDate(reservation.date)}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.place}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>{reservation.people}</td>
-        <td className='px-4 py-4 whitespace-nowrap'>
-          {!reservation.completed ? (
-            <MdOutlineRestaurant className='text-green-500 hover:underline cursor-pointer mr-4' onClick={() => handleMarkAsCompleted(reservation._id)} />
-          ) : (
-            <IoRestaurantSharp className='text-red-500' />
-          )}
-        </td>
-        <td className='px-4 py-4 whitespace-nowrap'>
-          <span
-            onClick={() => {
-              setShowModal(true);
-              setReservationIdToDelete(reservation._id);
-            }}
-            className='text-red-500 hover:underline cursor-pointer ml-4'
-          >
-            Borrar
-          </span>
-          <Link
-            className='text-teal-500 hover:underline ml-4'
-            to={`/update-reservation/reserve/${reservation._id}`}
-          >
-            Actualizar
-          </Link>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
-            {showMore && (
+            <table className='min-w-full divide-y divide-gray-200 shadow-md'>
+              <thead className='bg-gray-50'>
+                <tr>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    <input
+                      type="text"
+                      value={searchName}
+                      onChange={handleChange}
+                      placeholder="Buscar por nombre"
+                      className="mt-2 p-1 border border-gray-300 rounded-md"
+                    />
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Teléfono
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Hora
+                    <button onClick={() => handleSortBy('hour')} className='inline-block ml-1'>
+                      {sortBy.field === 'hour' && sortBy.order === 'asc' ? (
+                        <FaArrowUp />
+                      ) : (
+                        <FaArrowDown />
+                      )}
+                    </button>
+                  </th>
+                  <th>
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={handleDateChange}
+                      placeholderText="Fecha"
+                      className="large-font"
+                      dateFormat="dd-MM-yyyy"
+                    />
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Lugar
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Comensales
+                  </th>
+                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className='bg-white divide-y divide-gray-200'>
+                {reservations
+                  .filter(reservation =>
+                    reservation.name.toLowerCase().includes(searchName.toLowerCase())
+                  )
+                  .filter(reservation =>
+                    !selectedDate || formatDate(reservation.date) === formatDate(selectedDate)
+                  )
+                  .map((reservation) => (
+                    <tr key={reservation._id} className={`${reservation.completed ? 'bg-green-100' : ''}`}>
+                      <td className='px-4 py-2 whitespace-nowrap'>
+                        <div className='text-sm text-gray-900'>{reservation.name}</div>
+                      </td>
+                      <td className='px-4 py-2 whitespace-nowrap'>
+                        <div className='text-sm text-gray-900'>{reservation.phone}</div>
+                      </td>
+                      <td className='px-4 py-2 whitespace-nowrap'>
+                        <div className='text-sm text-gray-900'>{reservation.hour}</div>
+                      </td>
+                      <td className='px-4 py-2 whitespace-nowrap'>
+                        <div className='text-sm text-gray-900'>{formatDate(reservation.date)}</div>
+                      </td>
+                      <td className='px-4 py-2 whitespace-nowrap'>
+                        <div className='text-sm text-gray-900'>{reservation.place}</div>
+                      </td>
+                      <td className='px-4 py-2 whitespace-nowrap'>
+                        <div className='text-sm text-gray-900'>{reservation.people}</div>
+                      </td>
+                      <td className='px-4 py-2 whitespace-nowrap'>
+                        <div className='flex gap-2'>
+                          <button onClick={() => {
+                            setReservationIdToDelete(reservation._id);
+                            setShowModal(true);
+                          }} className='text-red-600 hover:text-red-900'>
+                            <HiOutlineExclamationCircle />
+                          </button>
+                          {!reservation.completed && (
+                            <button onClick={() => handleMarkAsCompleted(reservation._id)} className='text-green-600 hover:text-green-900'>
+                              <MdOutlineRestaurant />
+                            </button>
+                          )}
+                          <Link to={`/dashboard/editreservation/${reservation._id}`} className='text-blue-600 hover:text-blue-900'>
+                            <PiPencilSimpleLineFill />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+            <div className="flex items-center justify-between mt-4">
               <button
-                onClick={handleShowMore}
-                className='w-full text-teal-500 self-center text-sm py-7'
+                onClick={() => handlePageClick(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50"
               >
-                Mostrar más
+                <ChevronLeftIcon className="w-5 h-5" />
+                Anterior
               </button>
-            )}
+              <span className="text-sm text-gray-500">
+                Página {currentPage} de {totalPages}
+              </span>
+              <button
+                onClick={() => handlePageClick(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50"
+              >
+                Siguiente
+                <ChevronRightIcon className="w-5 h-5" />
+              </button>
+            </div>
           </>
         ) : (
-          <p>Aún no tienes ninguna reserva!</p>
+          <p className='text-center text-gray-500'>No reservations found.</p>
         )}
       </div>
-      {showModal && (
-        <div className='fixed z-10 inset-0 overflow-y-auto'>
-          <div className='flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>
-            <div className='fixed inset-0 transition-opacity' aria-hidden='true'>
-              <div className='absolute inset-0 bg-gray-500 opacity-75'></div>
-            </div>
-            <span className='hidden sm:inline-block sm:align-middle sm:h-screen' aria-hidden='true'></span>
-            <div className='inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full'>
-              <div className='bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4'>
-                <div className='sm:flex sm:items-start'>
-                  <div className='mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10'>
-                    <HiOutlineExclamationCircle className='h-6 w-6 text-red-600' />
-                  </div>
-                  <div className='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
-                    <h3 className='text-lg leading-6 font-medium text-gray-900' id='modal-title'>
-                      ¿Seguro que quieres eliminar esta reserva?
-                    </h3>
-                  </div>
-                </div>
-              </div>
-              <div className='bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse'>
-                <button
-                  onClick={handleDeleteReservation}
-                  className='w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm'
-                >
-                  Sí, estoy seguro
-                </button>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className='mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm'
-                >
-                  No, cancelar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-
