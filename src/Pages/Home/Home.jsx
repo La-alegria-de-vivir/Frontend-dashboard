@@ -50,7 +50,7 @@ export default function Home() {
         <div className="flex-1">
           <Link to="/" className='font-bold dark:text-white text-4xl'>
             <img
-              src={logo}
+              src= "https://firebasestorage.googleapis.com/v0/b/alegria-de-vivir-99.appspot.com/o/Logo_mancha_Alegria%20de%20vivir.png?alt=media&token=0e91c9e7-fc39-4382-9685-10437a5fc477"
               width={250}
               height={250}
               className="rounded-full"
