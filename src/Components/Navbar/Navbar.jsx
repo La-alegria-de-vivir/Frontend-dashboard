@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import logo from '../../../public/images/logo.png';
+// import logo from '../../../public/images/logo.png';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Navbar() {
@@ -31,10 +31,10 @@ function Navbar() {
           <div className="flex items-center">
             <a className="text-3xl font-bold font-heading" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
               <img
-                src={logo}
-                style={{ width: '50px', height: 'auto' }}
+                src="https://firebasestorage.googleapis.com/v0/b/alegria-de-vivir-99.appspot.com/o/Logo_Alegria%20de%20vivir_99%20arriba.png?alt=media&token=1dc769b6-0bcb-4177-bbac-291784e97934"
+                style={{ width: '100px', height: 'auto' }}
                 className=""
-                alt="Logo"
+                alt="Logo Alegria de Vivir"
               />
             </a>
           </div>
