@@ -86,8 +86,7 @@ export default function CreateMenu() {
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
-      <h1 className='text-center text-3xl my-7 font-semibold'>Crea un plato</h1>
-      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+      <form className='flex flex-col gap-4 mt-40' onSubmit={handleSubmit}>
         <div className='flex flex-col gap-4 sm:flex-row justify-between'>
           <TextInput
             type='text'
@@ -99,32 +98,19 @@ export default function CreateMenu() {
               setFormData({ ...formData, title: e.target.value })
             }
           />
-          <TextInput
-            type='number' // Utiliza un campo numérico para el precio
-            placeholder='Precio'
-            required
-            id='price'
-            className='flex-1'
-            onChange={(e) =>
-              setFormData({ ...formData, price: e.target.value })
-            }
-          />
+        <TextInput
+          type='number' // Utiliza un campo numérico para el precio
+          placeholder='Precio'
+          required
+          id='price'
+          className='flex-1'
+          step='0.01' // Permite decimales con dos cifras
+          onChange={(e) =>
+            setFormData({ ...formData, price: e.target.value })
+          }
+        />
+
         </div> 
-        <p>Alérgenos</p>
-        <div className='flex flex-col gap-4 sm:flex-row justify-between'>
-          <Select
-            onChange={(e) =>
-              setFormData({ ...formData, allergens: Array.from(e.target.selectedOptions, option => option.value) })
-            }
-            multiple // Permite selección múltiple
-            className='flex-1'
-          >
-            <option value='huevo'>Huevo</option>
-            <option value='pescado'>Pescado</option>
-            <option value='gluten'>Gluten</option>
-            <option value='lácteos'>Lácteos</option>
-          </Select>
-        </div>
         <div className='flex gap-4 items-center justify-between border-4 border-[#BBBC4E] border-dotted p-3'>
           <FileInput
             type='file'

@@ -133,22 +133,6 @@ export default function UpdateMenu() {
             value={formData.price || ''}
           />
         </div> 
-        <p>Alérgenos</p>
-        <div className='flex flex-col gap-4 sm:flex-row justify-between'>
-          <Select
-            onChange={(e) =>
-              setFormData({ ...formData, allergens: Array.from(e.target.selectedOptions, option => option.value) })
-            }
-            value={formData.allergens || []}
-            multiple
-            className='flex-1'
-          >
-            <option value='huevo'>Huevo</option>
-            <option value='pescado'>Pescado</option>
-            <option value='gluten'>Gluten</option>
-            <option value='lácteos'>Lácteos</option>
-          </Select>
-        </div>
         <div className='flex gap-4 items-center justify-between border-4 border-[#BBBC4E] border-dotted p-3'>
           <FileInput
             type='file'
