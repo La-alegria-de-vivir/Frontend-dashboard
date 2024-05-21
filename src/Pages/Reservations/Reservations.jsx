@@ -25,17 +25,18 @@ export default function Reservation() {
 // Define la función como async
 const fetchReservations = async () => {
   try {
-    const startIndex = (currentPage - 1) * 7; // Calcula el índice de inicio basado en la página actual
-    let url = `/api/reserve/getTotalReservations?startIndex=${startIndex}&limit=7`; // Usa startIndex y limit variables
+    const startIndex = (currentPage - 1) * 5;
+    const name = 'Nombre de búsqueda';
+    const date = '20-05-2024';
+    const url = `/api/reserve/getTotalReservations?startIndex=${startIndex}&limit=10&name=${name}&date=${date}`;
 
     const res = await fetch(url);
     const data = await res.json();
 
     if (res.ok) {
-      if (data && data.reservations) { // Verifica si hay reservas en la respuesta
+      if (data) {
         setReservations(data.reservations);
-        setTotalReservations(data.totalReservations);
-        console.log("Reservations fetched:", data); // Debug log
+        console.log("Reservations fetched:", data.reservations);
       } else {
         console.log("La respuesta de la API no contiene reservaciones:", data);
       }
@@ -52,13 +53,26 @@ const fetchReservations = async () => {
 
 const getTotalReservations = async (req, res) => {
   try {
-    const totalReservations = await Reservation.find().count();
-    res.status(200).json(totalReservations);
+    const { startIndex, limit, name, date } = req.query;
+    let query = {};
+
+    if (name) {
+      query.name = { $regex: name, $options: 'i' }; // Filtrar por nombre, ignorando mayúsculas y minúsculas
+    }
+
+    if (date) {
+      query.date = date; // Filtrar por fecha
+    }
+
+    const totalReservations = await Reservation.countDocuments(query);
+    const reservations = await Reservation.find(query).skip(parseInt(startIndex)).limit(parseInt(limit));
+    res.status(200).json({ totalReservations, reservations });
   } catch (error) {
     console.error("Error fetching total reservations:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
   
