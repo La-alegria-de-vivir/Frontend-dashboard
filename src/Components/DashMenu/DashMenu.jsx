@@ -46,7 +46,7 @@ export default function DashMenu() {
 
   const handleDeleteMenu = async () => {
     try {
-      const res = await fetch(`/api/menu/delete/${menuIdToDelete}`, {
+      const res = await fetch(`/api/menu/deletemenu/${menuIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -57,6 +57,7 @@ export default function DashMenu() {
       console.log(error.message);
     }
   };
+  
 
   return (
     <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full'>
