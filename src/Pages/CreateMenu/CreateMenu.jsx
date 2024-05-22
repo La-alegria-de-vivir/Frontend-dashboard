@@ -36,7 +36,7 @@ export default function CreateMenu() {
         'state_changed',
         (snapshot) => {
           const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 300;
           setImageUploadProgress(progress.toFixed(0));
         },
         (error) => {
