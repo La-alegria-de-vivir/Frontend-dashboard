@@ -7,85 +7,73 @@ import { PiPencilSimpleLineFill } from "react-icons/pi";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import ReportPDF from '../../Components/Report/Report.jsx';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
 export default function Reservation() {
   const [reservations, setReservations] = useState([]);
+  const [allReservations, setAllReservations] = useState([]);
   const [totalReservations, setTotalReservations] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [reservationIdToDelete, setReservationIdToDelete] = useState('');
   const [sortBy, setSortBy] = useState({ field: '', order: 'asc' });
   const [searchName, setSearchName] = useState('');
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
 
   useEffect(() => {
     fetchReservations();
-  }, [sortBy, searchName, currentPage, selectedDate]);
+    fetchReservations(true); // Fetch all records for the PDF
+  }, [sortBy, searchName, currentPage, dateRange]);
 
-// Define la función como async
-const fetchReservations = async () => {
-  try {
-    const startIndex = (currentPage - 1) * 5;
-    const name = 'Nombre de búsqueda';
-    const date = '20-05-2024';
-    const url = `/api/reserve/getTotalReservations?startIndex=${startIndex}&limit=10&name=${name}&date=${date}`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (res.ok) {
-      if (data) {
-        setReservations(data.reservations);
-        console.log("Reservations fetched:", data.reservations);
-      } else {
-        console.log("La respuesta de la API no contiene reservaciones:", data);
+  const fetchReservations = async (all = false) => {
+    try {
+      const startIndex = (currentPage - 1) * 5;
+      const params = new URLSearchParams();
+      if (!all) {
+        params.append('startIndex', startIndex);
+        params.append('limit', 10);
       }
-    } else {
-      console.log("Error al obtener las reservas:", res.status);
+      params.append('name', searchName);
+      params.append('startDate', startDate ? startDate.toISOString() : '');
+      params.append('endDate', endDate ? endDate.toISOString() : '');
+
+      if (sortBy.field) {
+        params.append('sortBy', sortBy.field);
+        params.append('sortOrder', sortBy.order);
+      }
+
+      const urlWithParams = `/api/reserve/getTotalReservations?${params.toString()}`;
+      const res = await fetch(urlWithParams);
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data) {
+          if (all) {
+            setAllReservations(data.reservations);
+          } else {
+            setReservations(data.reservations);
+            setTotalReservations(data.totalReservations);
+          }
+        } else {
+          console.log("La respuesta de la API no contiene reservaciones:", data);
+        }
+      } else {
+        console.log("Error al obtener las reservas:", res.status);
+      }
+    } catch (error) {
+      console.log("Error en la solicitud de reservas:", error.message);
     }
-  } catch (error) {
-    console.log("Error en la solicitud de reservas:", error.message);
-  }
-};
-
-
-
-
-const getTotalReservations = async (req, res) => {
-  try {
-    const { startIndex, limit, name, date } = req.query;
-    let query = {};
-
-    if (name) {
-      query.name = { $regex: name, $options: 'i' }; // Filtrar por nombre, ignorando mayúsculas y minúsculas
-    }
-
-    if (date) {
-      query.date = date; // Filtrar por fecha
-    }
-
-    const totalReservations = await Reservation.countDocuments(query);
-    const reservations = await Reservation.find(query).skip(parseInt(startIndex)).limit(parseInt(limit));
-    res.status(200).json({ totalReservations, reservations });
-  } catch (error) {
-    console.error("Error fetching total reservations:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-
-
-  
-  
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    console.log('Fecha seleccionada:', date);
   };
 
-  const totalPages = Math.ceil(totalReservations / 7); // Calcular total de páginas
+  const handleDateChange = (update) => {
+    setDateRange(update);
+    setCurrentPage(1); // Reset to first page on date change
+  };
 
   const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber); // Actualizar el estado currentPage al hacer clic en los botones de paginación
+    setCurrentPage(pageNumber);
   };
 
   const handleDeleteReservation = async () => {
@@ -117,26 +105,23 @@ const getTotalReservations = async (req, res) => {
 
       const data = await response.json();
 
-      // Actualizar el estado local solo si la solicitud fue exitosa
       setReservations(prevReservations =>
         prevReservations.map(reservation =>
           reservation._id === reservationId ? { ...reservation, completed: true } : reservation
         )
       );
-      console.log(data.message); // Opcional: mostrar mensaje de éxito
+      console.log(data.message);
     } catch (error) {
       console.log('Error al cerrar la reserva:', error.message);
     }
   };
 
-
-
   const formatDate = (dateString) => {
     if (!dateString) {
       console.error('Error: dateString is empty');
-      return null; // Otra acción apropiada para manejar el error
+      return null;
     }
-    return new Date(dateString).toLocaleDateString(); // Convertir a cadena legible para humanos
+    return new Date(dateString).toLocaleDateString();
   };
 
   const handleSortBy = (field) => {
@@ -147,10 +132,26 @@ const getTotalReservations = async (req, res) => {
     }
   };
 
-  const handleChange = (e) => {
-    const name = e.target.value;
-    setSearchName(name);
+  const filterReservations = (allReservations) => {
+    const filteredReservations = allReservations
+      .filter(reservation =>
+        reservation.name.toLowerCase().includes(searchName.toLowerCase())
+      )
+      .filter(reservation => {
+        if (!startDate || !endDate) return true;
+        const reservationDate = new Date(reservation.date);
+        return reservationDate >= startDate && reservationDate <= endDate;
+      });
+
+    return filteredReservations;
   };
+
+  const handleChange = (e) => {
+    setSearchName(e.target.value);
+    setCurrentPage(1); // Reset to first page on name search change
+  };
+
+  const totalPages = Math.ceil(totalReservations / 7);
 
   return (
     <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full'>
@@ -184,11 +185,14 @@ const getTotalReservations = async (req, res) => {
                   </th>
                   <th>
                     <DatePicker
-                      selected={selectedDate}
+                      selectsRange={true}
+                      startDate={startDate}
+                      endDate={endDate}
                       onChange={handleDateChange}
-                      placeholderText="Fecha"
+                      placeholderText="Selecciona rango de fechas"
                       className="large-font"
                       dateFormat="dd-MM-yyyy"
+                      isClearable={true}
                     />
                   </th>
                   <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
@@ -207,16 +211,18 @@ const getTotalReservations = async (req, res) => {
                   .filter(reservation =>
                     reservation.name.toLowerCase().includes(searchName.toLowerCase())
                   )
-                  .filter(reservation =>
-                    !selectedDate || formatDate(reservation.date) === formatDate(selectedDate)
-                  )
+                  .filter(reservation => {
+                    if (!startDate || !endDate) return true;
+                    const reservationDate = new Date(reservation.date);
+                    return reservationDate >= startDate && reservationDate <= endDate;
+                  })
                   .map((reservation) => (
                     <tr key={reservation._id} className={`${reservation.completed ? 'bg-green-100' : ''}`}>
                       <td className='px-4 py-2 whitespace-nowrap'>
                         <div className='text-sm text-gray-900'>{reservation.name}</div>
                       </td>
                       <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>{reservation.phone}</div>
+                        <div className='text-sm text-gray-900'>{reservation.phoneNumber}</div>
                       </td>
                       <td className='px-4 py-2 whitespace-nowrap'>
                         <div className='text-sm text-gray-900'>{reservation.hour}</div>
@@ -269,13 +275,26 @@ const getTotalReservations = async (req, res) => {
                 disabled={currentPage === totalPages}
                 className="flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50"
               >
-                Siguiente
+                  Siguiente
                 <ChevronRightIcon className="w-5 h-5" />
               </button>
             </div>
+
+            {/* Sección para generar el informe PDF */}
+            <div className="mt-4">
+              <PDFDownloadLink
+                document={<ReportPDF reservations={filterReservations(allReservations)} />}
+                fileName="informe_reservas.pdf"
+                className="text-blue-600 hover:text-blue-900"
+              >
+                {({ blob, url, loading, error }) =>
+                  loading ? 'Generando informe...' : 'Descargar informe PDF'
+                }
+              </PDFDownloadLink>
+            </div>
           </>
         ) : (
-          <p className='text-center text-gray-500'>No reservations found.</p>
+          <p className='text-center text-gray-500'>No se encontraron reservas.</p>
         )}
       </div>
     </div>
