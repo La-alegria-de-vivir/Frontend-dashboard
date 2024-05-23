@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import { PiPencilSimpleLineFill } from "react-icons/pi";
+
 import { Link } from 'react-router-dom';
 
 export default function DashMenu() {
@@ -91,7 +93,7 @@ export default function DashMenu() {
                     <td className='px-4 py-4 whitespace-nowrap overflow-hidden overflow-ellipsis w-1/5 text-sm max-w-[10rem]'>{menu.description}</td>
                     <td className='px-4 py-4 whitespace-nowrap'>{menu.price}€</td> {/* Agregar símbolo del euro */}
                     <td className='px-4 py-4 whitespace-nowrap'><img src={menu.image} alt={menu.title} className="w-16 h-16" /></td>
-                    <td className='px-4 py-4 whitespace-nowrap'>
+                    <td className='px-4 py-4 whitespace-nowrap flex'>
                       <span
                         onClick={() => {
                           setShowModal(true);
@@ -99,14 +101,14 @@ export default function DashMenu() {
                         }}
                         className='text-red-500 hover:underline cursor-pointer mr-4'
                       >
-                        Borrar
+                        <HiOutlineExclamationCircle />
                       </span>
                       <span>
                       <Link
                       className='text-teal-500 hover:underline'
                       to={`/update-menu/${menu._id}`}
                       >
-                      <span>Actualizar</span>
+                      <span><PiPencilSimpleLineFill /></span>
                        </Link>
 
                       </span>
