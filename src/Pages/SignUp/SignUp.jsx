@@ -56,7 +56,7 @@ export default function SignUp() {
               Disfruta de la Cocina Viva y en Constante Evolución!
             </p>
         </div>
-        {/* right */}
+   
 
         <div className='flex-1 bg-white bg-opacity-75 p-6 rounded-lg shadow-md'>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>

@@ -6,8 +6,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   
-  const isAuthenticated = true; // Reemplaza esto con tu lógica real
-
+  const isAuthenticated = true; 
   const handleLogoClick = () => {
     if (isAuthenticated) {
       navigate('/dashboard?tab=profile');
@@ -72,13 +71,11 @@ function Navbar() {
             <li><a className="hover:text-[#BBBC4E] cursor-pointer" onClick={handleInicioClick}>Inicio</a></li>
             <li><Link className="hover:text-[#BBBC4E]" to="/reservations">Reservas</Link></li>
             <li><Link className="hover:text-[#BBBC4E]" to="/create-menu">Menú</Link></li>
-            <li><Link className="hover:text-[#BBBC4E]" to="#">Contacto</Link></li>
           </ul>
           <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
             <li><a className="hover:text-[#BBBC4E] cursor-pointer" onClick={handleInicioClick}>Inicio</a></li>
             <li><Link className="hover:text-[#BBBC4E]" to="/reservations">Reservas</Link></li>
             <li><Link className="hover:text-[#BBBC4E]" to="/create-menu">Menú</Link></li>
-            <li><Link className="hover:text-[#BBBC4E]" to="#">Contacto</Link></li>
           </ul>
         </nav>
       </section>

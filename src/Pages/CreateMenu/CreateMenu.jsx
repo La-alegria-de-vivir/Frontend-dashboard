@@ -99,12 +99,12 @@ export default function CreateMenu() {
             }
           />
         <TextInput
-          type='number' // Utiliza un campo numérico para el precio
+          type='number' 
           placeholder='Precio'
           required
           id='price'
           className='flex-1'
-          step='0.01' // Permite decimales con dos cifras
+          step='0.01' 
           onChange={(e) =>
             setFormData({ ...formData, price: e.target.value })
           }

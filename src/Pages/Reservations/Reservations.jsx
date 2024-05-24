@@ -23,9 +23,11 @@ export default function Reservation() {
   const [startDate, endDate] = dateRange;
 
   useEffect(() => {
+    setCurrentPage(1); 
     fetchReservations();
-    fetchReservations(true); // Fetch all records for the PDF
+    fetchReservations(true); 
   }, [sortBy, searchName, currentPage, dateRange]);
+  
 
   const fetchReservations = async (all = false) => {
     try {
@@ -69,7 +71,7 @@ export default function Reservation() {
 
   const handleDateChange = (update) => {
     setDateRange(update);
-    setCurrentPage(1); // Reset to first page on date change
+    setCurrentPage(1); 
   };
 
   const handlePageClick = (pageNumber) => {
@@ -148,7 +150,7 @@ export default function Reservation() {
 
   const handleChange = (e) => {
     setSearchName(e.target.value);
-    setCurrentPage(1); // Reset to first page on name search change
+    setCurrentPage(1); 
   };
 
   const totalPages = Math.ceil(totalReservations / 7);

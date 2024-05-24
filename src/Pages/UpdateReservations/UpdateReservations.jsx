@@ -106,7 +106,7 @@ const UpdateReservations = () => {
                                             (selectedHour >= 12 && selectedHour < 17) || 
                                             (selectedHour >= 20 && selectedHour < 24) 
                                         ) {
-                                            // Hora válida
+                                           
                                         } else {
                                             errors.hour = 'Hora no válida. Horario de reserva: Miércoles a Sábado (12:30 - 17:00, 20:00 - 23:30), Domingo (12:30 - 17:00)';
                                         }
@@ -164,7 +164,7 @@ const UpdateReservations = () => {
                         <p className='mt-4 text-center text-black font-bold'>Para grupos superiores a 10 personas, contacta con el restaurante. Gracias</p>
                     </aside>
                 </div>
-                {/* Modal de confirmación */}
+               
                 {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
                         <div className="bg-white p-8 rounded-md max-w-md">

@@ -36,7 +36,7 @@ export default function Home() {
 
       if (res.ok) {
         dispatch(signInSuccess(data));
-        navigate('/dashboard?tab=profile'); // Redirección después del inicio de sesión exitoso
+        navigate('/dashboard?tab=profile'); 
       }
     } catch (error) {
       dispatch(signInFailure(error.message));
@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <div className='min-h-screen mt-40'>
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
-        {/* left */}
+        
         <div className="flex-1">
           <Link to="/" className='font-bold dark:text-white text-4xl'>
             <img
@@ -61,7 +61,7 @@ export default function Home() {
             Disfruta de la Cocina Viva y en Constante Evolución!
           </p>
         </div>
-        {/* right */}
+        
         <div className="flex-1 max-w-4xl mx-auto bg-white bg-opacity-75 p-6 rounded-lg shadow-md">
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>

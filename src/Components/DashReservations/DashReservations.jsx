@@ -28,8 +28,8 @@ export default function DashReservation() {
 
       if (res.ok) {
         if (data) {
-          const currentDate = new Date().toISOString().slice(0, 10); // Obtiene la fecha actual en formato YYYY-MM-DD
-          const filteredData = data.filter(reservation => reservation.date.slice(0, 10) === currentDate); // Filtra las reservas por la fecha actual
+          const currentDate = new Date().toISOString().slice(0, 10); 
+          const filteredData = data.filter(reservation => reservation.date.slice(0, 10) === currentDate); 
           const sortedData = sortData(filteredData);
 
           setReservations(sortedData.slice(0, 7));
@@ -52,8 +52,8 @@ export default function DashReservation() {
       const res = await fetch(`/api/reserve/getreservations?startIndex=${startIndex}`);
       const newData = await res.json();
       if (res.ok) {
-        const currentDate = new Date().toISOString().slice(0, 10); // Obtiene la fecha actual en formato YYYY-MM-DD
-        const filteredData = newData.filter(reservation => reservation.date.slice(0, 10) === currentDate); // Filtra las reservas por la fecha actual
+        const currentDate = new Date().toISOString().slice(0, 10); 
+        const filteredData = newData.filter(reservation => reservation.date.slice(0, 10) === currentDate); 
         const allData = [...reservations, ...filteredData];
         const uniqueData = Array.from(new Set(allData.map(r => r._id))).map(id => {
           return allData.find(r => r._id === id);
@@ -62,7 +62,7 @@ export default function DashReservation() {
 
         setReservations(sortedData);
         setTotalReservations(sortedData.length);
-        setShowMore(filteredData.length > 0); // Mostrar el botón solo si hay más reservas
+        setShowMore(filteredData.length > 0); 
       }
     } catch (error) {
       console.log(error.message);
@@ -98,13 +98,12 @@ export default function DashReservation() {
 
       const data = await response.json();
 
-      // Actualizar el estado local solo si la solicitud fue exitosa
       setReservations(prevReservations =>
         prevReservations.map(reservation =>
           reservation._id === reservationId ? { ...reservation, completed: true } : reservation
         )
       );
-      console.log(data.message); // Opcional: mostrar mensaje de éxito
+      console.log(data.message); 
     } catch (error) {
       console.log('Error al cerrar la reserva:', error.message);
     }
@@ -129,7 +128,7 @@ export default function DashReservation() {
   const sortData = (data) => {
     return data.sort((a, b) => {
       if (sortBy.field === 'hour') {
-        // Ordena por hora de la más reciente a la más antigua
+
         const hourA = parseInt(a.hour.split(':')[0]);
         const hourB = parseInt(b.hour.split(':')[0]);
         return sortBy.order === 'asc' ? hourA - hourB : hourB - hourA;
