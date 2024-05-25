@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaCheckCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { MdOutlineRestaurant } from "react-icons/md";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
@@ -23,44 +23,34 @@ export default function Reservation() {
   const [startDate, endDate] = dateRange;
 
   useEffect(() => {
-    setCurrentPage(1); 
     fetchReservations();
-    fetchReservations(true); 
-  }, [sortBy, searchName, currentPage, dateRange]);
-  
+  }, [sortBy, searchName, currentPage, startDate, endDate]);
 
-  const fetchReservations = async (all = false) => {
+  useEffect(() => {
+    fetchAllReservations();
+  }, []);
+
+  const fetchReservations = async () => {
     try {
-      const startIndex = (currentPage - 1) * 5;
       const params = new URLSearchParams();
-      if (!all) {
-        params.append('startIndex', startIndex);
-        params.append('limit', 10);
-      }
-      params.append('name', searchName);
-      params.append('startDate', startDate ? startDate.toISOString() : '');
-      params.append('endDate', endDate ? endDate.toISOString() : '');
-
+      const startIndex = (currentPage - 1) * 7;
+      params.append('startIndex', startIndex);
+      params.append('limit', 7);
+      if (searchName) params.append('name', searchName);
+      if (startDate) params.append('startDate', startDate.toISOString());
+      if (endDate) params.append('endDate', endDate.toISOString());
       if (sortBy.field) {
         params.append('sortBy', sortBy.field);
         params.append('sortOrder', sortBy.order);
       }
+      
 
-      const urlWithParams = `/api/reserve/getTotalReservations?${params.toString()}`;
-      const res = await fetch(urlWithParams);
+      const res = await fetch(`/api/reserve/getTotalReservations?${params.toString()}`);
       const data = await res.json();
 
       if (res.ok) {
-        if (data) {
-          if (all) {
-            setAllReservations(data.reservations);
-          } else {
-            setReservations(data.reservations);
-            setTotalReservations(data.totalReservations);
-          }
-        } else {
-          console.log("La respuesta de la API no contiene reservaciones:", data);
-        }
+        setReservations(data.reservations);
+        setTotalReservations(data.totalReservations);
       } else {
         console.log("Error al obtener las reservas:", res.status);
       }
@@ -69,9 +59,24 @@ export default function Reservation() {
     }
   };
 
+  const fetchAllReservations = async () => {
+    try {
+      const res = await fetch(`/api/reserve/getTotalReservations`);
+      const data = await res.json();
+
+      if (res.ok) {
+        setAllReservations(data.reservations);
+      } else {
+        console.log("Error al obtener todas las reservas:", res.status);
+      }
+    } catch (error) {
+      console.log("Error en la solicitud de todas las reservas:", error.message);
+    }
+  };
+
   const handleDateChange = (update) => {
     setDateRange(update);
-    setCurrentPage(1); 
+    setCurrentPage(1); // Reset to first page on date change
   };
 
   const handlePageClick = (pageNumber) => {
@@ -84,8 +89,11 @@ export default function Reservation() {
         method: 'DELETE',
       });
       if (res.ok) {
+        // Eliminar la reserva de la lista actual sin esperar la sincronización del servidor
         setReservations((prev) => prev.filter((reservation) => reservation._id !== reservationIdToDelete));
         setShowModal(false);
+        // Sincronizar con el servidor después de actualizar el estado local
+        fetchAllReservations();
       }
     } catch (error) {
       console.log(error.message);
@@ -94,29 +102,31 @@ export default function Reservation() {
 
   const handleMarkAsCompleted = async (reservationId) => {
     try {
-      const response = await fetch(`/api/reserve/close-reservation/${reservationId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
+        const response = await fetch(`/api/reserve/close-reservation/${reservationId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if (!response.ok) {
+            throw new Error('Error al cerrar la reserva');
         }
-      });
+        console.log('Reserva marcada como cerrada correctamente');
 
-      if (!response.ok) {
-        throw new Error('Error al cerrar la reserva');
-      }
+        // Actualizar el estado local después de cerrar la reserva
+        setReservations((prevReservations) => 
+            prevReservations.map((reservation) => 
+                reservation._id === reservationId 
+                    ? { ...reservation, status: 'closed', completed: true } 
+                    : reservation
+            )
+        );
 
-      const data = await response.json();
-
-      setReservations(prevReservations =>
-        prevReservations.map(reservation =>
-          reservation._id === reservationId ? { ...reservation, completed: true } : reservation
-        )
-      );
-      console.log(data.message);
+        // Actualizar la lista de todas las reservas desde el servidor para reflejar el cambio en la interfaz
+        fetchAllReservations();
     } catch (error) {
-      console.log('Error al cerrar la reserva:', error.message);
+        console.log('Error al cerrar la reserva:', error.message);
     }
-  };
+};
+
 
   const formatDate = (dateString) => {
     if (!dateString) {
@@ -135,7 +145,7 @@ export default function Reservation() {
   };
 
   const filterReservations = (allReservations) => {
-    const filteredReservations = allReservations
+    return allReservations
       .filter(reservation =>
         reservation.name.toLowerCase().includes(searchName.toLowerCase())
       )
@@ -144,21 +154,21 @@ export default function Reservation() {
         const reservationDate = new Date(reservation.date);
         return reservationDate >= startDate && reservationDate <= endDate;
       });
-
-    return filteredReservations;
   };
 
   const handleChange = (e) => {
     setSearchName(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1); // Reset to first page on name search change
   };
 
-  const totalPages = Math.ceil(totalReservations / 7);
+  const filteredReservations = filterReservations(allReservations);
+  const paginatedReservations = filteredReservations.slice((currentPage - 1) * 7, currentPage * 7);
+  const totalPages = Math.ceil(filteredReservations.length / 7);
 
   return (
     <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full'>
       <div className="overflow-y-auto h-full">
-        {reservations.length > 0 ? (
+        {paginatedReservations.length > 0 ? (
           <>
             <table className='min-w-full divide-y divide-gray-200 shadow-md'>
               <thead className='bg-gray-50'>
@@ -209,55 +219,49 @@ export default function Reservation() {
                 </tr>
               </thead>
               <tbody className='bg-white divide-y divide-gray-200'>
-                {reservations
-                  .filter(reservation =>
-                    reservation.name.toLowerCase().includes(searchName.toLowerCase())
-                  )
-                  .filter(reservation => {
-                    if (!startDate || !endDate) return true;
-                    const reservationDate = new Date(reservation.date);
-                    return reservationDate >= startDate && reservationDate <= endDate;
-                  })
-                  .map((reservation) => (
-                    <tr key={reservation._id} className={`${reservation.completed ? 'bg-green-100' : ''}`}>
-                      <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>{reservation.name}</div>
-                      </td>
-                      <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>{reservation.phoneNumber}</div>
-                      </td>
-                      <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>{reservation.hour}</div>
-                      </td>
-                      <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>{formatDate(reservation.date)}</div>
-                      </td>
-                      <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>{reservation.place}</div>
-                      </td>
-                      <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>{reservation.people}</div>
-                      </td>
-                      <td className='px-4 py-2 whitespace-nowrap'>
-                        <div className='flex gap-2'>
-                          <button onClick={() => {
-                            setReservationIdToDelete(reservation._id);
-                            setShowModal(true);
-                          }} className='text-red-600 hover:text-red-900'>
-                            <HiOutlineExclamationCircle />
-                          </button>
-                          {!reservation.completed && (
-                            <button onClick={() => handleMarkAsCompleted(reservation._id)} className='text-green-600 hover:text-green-900'>
-                              <MdOutlineRestaurant />
-                            </button>
-                          )}
-                          <Link to={`/dashboard/editreservation/${reservation._id}`} className='text-blue-600 hover:text-blue-900'>
-                            <PiPencilSimpleLineFill />
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                {paginatedReservations.map((reservation) => (
+                  <tr key={reservation._id} className={`${reservation.completed ? 'bg-green-100' : ''}`}>
+                    <td className='px-4 py-2 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>{reservation.name}</div>
+                    </td>
+                    <td className='px-4 py-2 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>{reservation.phoneNumber}</div>
+                    </td>
+                    <td className='px-4 py-2 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>{reservation.hour}</div>
+                    </td>
+                    <td className='px-4 py-2 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>{formatDate(reservation.date)}</div>
+                    </td>
+                    <td className='px-4 py-2 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>{reservation.place}</div>
+                    </td>
+                    <td className='px-4 py-2 whitespace-nowrap'>
+                      <div className='text-sm text-gray-900'>{reservation.people}</div>
+                    </td>
+                    <td className='px-4 py-2 whitespace-nowrap text-sm font-medium flex'>
+                      <Link to={`/update-reservation/reserve/${reservation._id}`} className='text-indigo-600 hover:text-indigo-900 mr-2'>
+                        <PiPencilSimpleLineFill />
+                      </Link>
+                      {reservation.completed ? (
+                        <FaCheckCircle className='text-green-600' />
+                      ) : (
+                        <button
+                          onClick={() => handleMarkAsCompleted(reservation._id)}
+                          className='text-green-600 hover:text-green-900'
+                        >
+                          <MdOutlineRestaurant />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => { setShowModal(true); setReservationIdToDelete(reservation._id); }}
+                        className='ml-2 text-red-600 hover:text-red-900'
+                      >
+                        <HiOutlineExclamationCircle />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             <div className="flex items-center justify-between mt-4">
@@ -277,7 +281,7 @@ export default function Reservation() {
                 disabled={currentPage === totalPages}
                 className="flex items-center px-2 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50"
               >
-                  Siguiente
+                Siguiente
                 <ChevronRightIcon className="w-5 h-5" />
               </button>
             </div>
@@ -285,7 +289,7 @@ export default function Reservation() {
             {/* Sección para generar el informe PDF */}
             <div className="mt-4">
               <PDFDownloadLink
-                document={<ReportPDF reservations={filterReservations(allReservations)} />}
+                document={<ReportPDF reservations={filteredReservations} />}
                 fileName="informe_reservas.pdf"
                 className="text-blue-600 hover:text-blue-900"
               >
@@ -299,6 +303,22 @@ export default function Reservation() {
           <p className='text-center text-gray-500'>No se encontraron reservas.</p>
         )}
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <p>¿Estás seguro de que quieres eliminar esta reserva?</p>
+            <div className="mt-4 flex justify-end">
+              <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-300 rounded-md mr-2">
+                Cancelar
+              </button>
+              <button onClick={handleDeleteReservation} className="px-4 py-2 bg-red-600 text-white rounded-md">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
