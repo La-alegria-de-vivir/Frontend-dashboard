@@ -10,15 +10,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  logo: {
-    width: 50,
-    height: 50,
-    position: 'absolute',
-    top: 10,
-    left: 10,
-  },
-  dateRange: {
-    fontSize: 12,
+  subtitle: {
+    fontSize: 16,
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -44,32 +37,60 @@ const styles = StyleSheet.create({
   tableCell: {
     fontSize: 10,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 100, // Ajusta el ancho de la imagen aquí
+    height: 50,
+    marginRight: 10,
+  },
 });
 
-const ReportPDF = ({ reservations, startDate, endDate }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-    <Image src="https://firebasestorage.googleapis.com/v0/b/alegria-de-vivir-99.appspot.com/o/1716283046941-Logo_mancha_Alegria%20de%20vivir%2099%20abajo.png?alt=media&token=d9367704-e7eb-4654-a24c-dd945d7b1978" style={{ width: 50 }} />
-      <Text style={styles.title}>Informe de Reservas</Text>
-      <Text style={styles.dateRange}>Del {startDate} al {endDate}</Text>
-      <View style={styles.table}>
-        <View style={styles.tableRow}>
-          <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Nombre</Text></View>
-          <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Teléfono</Text></View>
-          <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Comensales</Text></View>
-          <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Lugar</Text></View>
+const ReportPDF = ({ reservations, startDate, endDate }) => {
+  const logoUrl = '../../public/images/logo.png';
+
+  const totalComensales = reservations.reduce((total, reservation) => total + reservation.people, 0);
+
+  // Contar reservas completadas y pendientes
+  const completadas = reservations.filter(reservation => reservation.completed).length;
+  const pendientes = reservations.length - completadas;
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <View style={styles.header}>
+        <Image style={{ ...styles.logo, width: 150 }} src={logoUrl} />
+          <Text style={styles.title}>Informe de Reservas</Text>
         </View>
-        {reservations.map((reservation) => (
-          <View key={reservation._id} style={styles.tableRow}>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.name}</Text></View>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.phoneNumber}</Text></View>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.people}</Text></View>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.place}</Text></View>
+        <Text style={styles.subtitle}>Fecha del informe: {startDate} - {endDate}</Text>
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Nombre</Text></View>
+            <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Teléfono</Text></View>
+            <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Comensales</Text></View>
+            <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Lugar</Text></View>
+            <View style={styles.tableCol}><Text style={styles.tableCellHeader}>Estado</Text></View>
           </View>
-        ))}
-      </View>
-    </Page>
-  </Document>
-);
+          {reservations.map((reservation) => (
+            <View key={reservation._id} style={styles.tableRow}>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.name}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.phoneNumber}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.people}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.place}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{reservation.completed ? 'Completada' : 'Abierta'}</Text></View>
+            </View>
+          ))}
+        </View>
+          <Text style={{ textAlign: 'right', marginBottom: 10 }}>Total de comensales: {totalComensales}</Text>
+          <Text style={{ textAlign: 'right', marginBottom: 10 }}>Reservas completadas: {completadas}</Text>
+          <Text style={{ textAlign: 'right', marginBottom: 10 }}>Reservas abiertas: {pendientes}</Text>
+          <Text style={{ textAlign: 'right', marginBottom: 10 }}>Total de reservas: {reservations.length}</Text>
+      </Page>
+    </Document>
+  );
+};
 
 export default ReportPDF;

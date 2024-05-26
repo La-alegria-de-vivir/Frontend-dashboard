@@ -34,7 +34,7 @@ function App() {
           <Route path='/update-reservation/reserve/:reservationId' element={<UpdateReservations/>}/>
         </Route>
         <Route path='/signup' element={<SignUp/>}/>
-        {/* Redirige desde / a /dashboard?tab=profile */}
+        
         <Route path="/" element={<Navigate to="/dashboard?tab=profile" />} />
       </Routes>
       <Footer/>

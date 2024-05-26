@@ -24,7 +24,7 @@ export default function DashSidebar() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout', {
+      const res = await fetch('https://backend-la-alegria-de-vivir.onrender.com/api/user/signout', {
         method: 'POST',
       });
       const data = await res.json();
@@ -56,7 +56,7 @@ export default function DashSidebar() {
         )}
         {currentUser.isAdmin && (
           <>
-            <div className='mt-1'> {/* Nuevo div con margen superior */}
+            <div className='mt-1'> 
               <Link to='/dashboard?tab=reservations'>
                 <div className={`p-4 rounded ${tab === 'reservations' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
                   <MdTableRestaurant  className='inline-block mr-2' />
@@ -66,7 +66,7 @@ export default function DashSidebar() {
             <Link to='/dashboard?tab=users'>
               <div className={`p-4 rounded ${tab === 'users' ? 'bg-[#BBBC4E] text-white' : 'hover:bg-gray-200'}`}>
                 <IoPeople className='inline-block mr-2' />
-                Usarios
+                Usuarios
               </div>
             </Link>
               <div className='p-4 rounded hover:bg-gray-200 cursor-pointer' onClick={handleSignout}>

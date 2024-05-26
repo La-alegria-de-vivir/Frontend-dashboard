@@ -17,11 +17,11 @@ export default function DashMenu() {
 
   const fetchMenus = async () => {
     try {
-      const res = await fetch(`/api/menu/getMenu`);
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/menu/getMenu`);
       const data = await res.json();
       if (res.ok) {
-        setMenus(data.menu.slice(0, 5)); // Limitar a los primeros 5 platos
-        if (data.menu.length <= 5) { // Cambiar condición para mostrar botón "Show more"
+        setMenus(data.menu.slice(0, 5)); 
+        if (data.menu.length <= 5) { 
           setShowMore(false);
         }
       }
@@ -33,7 +33,7 @@ export default function DashMenu() {
   const handleShowMore = async () => {
     const startIndex = menus.length;
     try {
-      const res = await fetch(`/api/menu/getMenu?startIndex=${startIndex}`);
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/menu/getMenu?startIndex=${startIndex}`);
       const data = await res.json();
       if (res.ok) {
         setMenus((prev) => [...prev, ...data.menu]);
@@ -48,7 +48,7 @@ export default function DashMenu() {
 
   const handleDeleteMenu = async () => {
     try {
-      const res = await fetch(`/api/menu/deletemenu/${menuIdToDelete}`, {
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/menu/deletemenu/${menuIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {

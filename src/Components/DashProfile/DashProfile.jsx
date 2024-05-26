@@ -34,7 +34,7 @@ const handleSubmit = async (e) =>{
   }
   try {
     dispatch(updateStart());
-    const res = await fetch(`api/user/update/${currentUser._id}`, {
+    const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/user/update/${currentUser._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const handleDeleteUser = async () => {
   setShowModal(false);
   try {
     dispatch(deleteUserStart());
-    const res = await fetch(`/api/user/delete/${currentUser._id}`,{
+    const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/user/delete/${currentUser._id}`,{
       method: 'DELETE'
     });
     const data = await res.json();
@@ -74,7 +74,7 @@ const handleDeleteUser = async () => {
 
 const handleSignout = async () =>{
   try {
-    const res = await fetch('/api/user/signout', {
+    const res = await fetch('https://backend-la-alegria-de-vivir.onrender.com/api/user/signout', {
       method: 'POST',
     });
     const data = await res.json();

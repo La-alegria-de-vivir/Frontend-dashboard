@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { FaArrowUp, FaArrowDown, FaCheckCircle } from 'react-icons/fa';
+import { FaTrash } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { IoRestaurantSharp } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import { MdOutlineRestaurant } from "react-icons/md";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
@@ -43,9 +44,8 @@ export default function Reservation() {
         params.append('sortBy', sortBy.field);
         params.append('sortOrder', sortBy.order);
       }
-      
 
-      const res = await fetch(`/api/reserve/getTotalReservations?${params.toString()}`);
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getTotalReservations?${params.toString()}`);
       const data = await res.json();
 
       if (res.ok) {
@@ -61,7 +61,7 @@ export default function Reservation() {
 
   const fetchAllReservations = async () => {
     try {
-      const res = await fetch(`/api/reserve/getTotalReservations`);
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getTotalReservations`);
       const data = await res.json();
 
       if (res.ok) {
@@ -76,7 +76,7 @@ export default function Reservation() {
 
   const handleDateChange = (update) => {
     setDateRange(update);
-    setCurrentPage(1); // Reset to first page on date change
+    setCurrentPage(1); 
   };
 
   const handlePageClick = (pageNumber) => {
@@ -85,14 +85,12 @@ export default function Reservation() {
 
   const handleDeleteReservation = async () => {
     try {
-      const res = await fetch(`/api/reserve/deletereservations/${reservationIdToDelete}`, {
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/deletereservations/${reservationIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {
-        // Eliminar la reserva de la lista actual sin esperar la sincronización del servidor
         setReservations((prev) => prev.filter((reservation) => reservation._id !== reservationIdToDelete));
         setShowModal(false);
-        // Sincronizar con el servidor después de actualizar el estado local
         fetchAllReservations();
       }
     } catch (error) {
@@ -102,7 +100,7 @@ export default function Reservation() {
 
   const handleMarkAsCompleted = async (reservationId) => {
     try {
-        const response = await fetch(`/api/reserve/close-reservation/${reservationId}`, {
+        const response = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/close-reservation/${reservationId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -111,7 +109,6 @@ export default function Reservation() {
         }
         console.log('Reserva marcada como cerrada correctamente');
 
-        // Actualizar el estado local después de cerrar la reserva
         setReservations((prevReservations) => 
             prevReservations.map((reservation) => 
                 reservation._id === reservationId 
@@ -120,13 +117,11 @@ export default function Reservation() {
             )
         );
 
-        // Actualizar la lista de todas las reservas desde el servidor para reflejar el cambio en la interfaz
         fetchAllReservations();
     } catch (error) {
         console.log('Error al cerrar la reserva:', error.message);
     }
 };
-
 
   const formatDate = (dateString) => {
     if (!dateString) {
@@ -158,112 +153,117 @@ export default function Reservation() {
 
   const handleChange = (e) => {
     setSearchName(e.target.value);
-    setCurrentPage(1); // Reset to first page on name search change
+    setCurrentPage(1); 
   };
 
   const filteredReservations = filterReservations(allReservations);
   const paginatedReservations = filteredReservations.slice((currentPage - 1) * 7, currentPage * 7);
   const totalPages = Math.ceil(filteredReservations.length / 7);
 
+
+  const formattedStartDate = startDate ? startDate.toLocaleDateString() : 'N/A';
+  const formattedEndDate = endDate ? endDate.toLocaleDateString() : 'N/A';
+
   return (
-    <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full'>
+    <div className='table-auto overflow-y-hidden md:mx-auto p-3 h-screen mt-24 w-full mx-auto px-6'>
       <div className="overflow-y-auto h-full">
         {paginatedReservations.length > 0 ? (
           <>
-            <table className='min-w-full divide-y divide-gray-200 shadow-md'>
-              <thead className='bg-gray-50'>
-                <tr>
-                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                    <input
-                      type="text"
-                      value={searchName}
-                      onChange={handleChange}
-                      placeholder="Buscar por nombre"
-                      className="mt-2 p-1 border border-gray-300 rounded-md"
-                    />
-                  </th>
-                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                    Teléfono
-                  </th>
-                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                    Hora
-                    <button onClick={() => handleSortBy('hour')} className='inline-block ml-1'>
-                      {sortBy.field === 'hour' && sortBy.order === 'asc' ? (
-                        <FaArrowUp />
-                      ) : (
-                        <FaArrowDown />
-                      )}
-                    </button>
-                  </th>
-                  <th>
-                    <DatePicker
-                      selectsRange={true}
-                      startDate={startDate}
-                      endDate={endDate}
-                      onChange={handleDateChange}
-                      placeholderText="Selecciona rango de fechas"
-                      className="large-font"
-                      dateFormat="dd-MM-yyyy"
-                      isClearable={true}
-                    />
-                  </th>
-                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                    Lugar
-                  </th>
-                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                    Comensales
-                  </th>
-                  <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className='bg-white divide-y divide-gray-200'>
-                {paginatedReservations.map((reservation) => (
-                  <tr key={reservation._id} className={`${reservation.completed ? 'bg-green-100' : ''}`}>
-                    <td className='px-4 py-2 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{reservation.name}</div>
-                    </td>
-                    <td className='px-4 py-2 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{reservation.phoneNumber}</div>
-                    </td>
-                    <td className='px-4 py-2 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{reservation.hour}</div>
-                    </td>
-                    <td className='px-4 py-2 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{formatDate(reservation.date)}</div>
-                    </td>
-                    <td className='px-4 py-2 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{reservation.place}</div>
-                    </td>
-                    <td className='px-4 py-2 whitespace-nowrap'>
-                      <div className='text-sm text-gray-900'>{reservation.people}</div>
-                    </td>
-                    <td className='px-4 py-2 whitespace-nowrap text-sm font-medium flex'>
-                      <Link to={`/update-reservation/reserve/${reservation._id}`} className='text-indigo-600 hover:text-indigo-900 mr-2'>
-                        <PiPencilSimpleLineFill />
-                      </Link>
-                      {reservation.completed ? (
-                        <FaCheckCircle className='text-green-600' />
-                      ) : (
-                        <button
-                          onClick={() => handleMarkAsCompleted(reservation._id)}
-                          className='text-green-600 hover:text-green-900'
-                        >
-                          <MdOutlineRestaurant />
-                        </button>
-                      )}
-                      <button
-                        onClick={() => { setShowModal(true); setReservationIdToDelete(reservation._id); }}
-                        className='ml-2 text-red-600 hover:text-red-900'
-                      >
-                        <HiOutlineExclamationCircle />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  <table className='min-w-full divide-y divide-gray-200 shadow-md'>
+  <thead className='bg-gray-50'>
+    <tr>
+      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+        <input
+          type="text"
+          value={searchName}
+          onChange={handleChange}
+          placeholder="Buscar por nombre"
+          className="mt-2 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </th>
+      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+        Teléfono
+      </th>
+      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+        Hora
+        <button onClick={() => handleSortBy('hour')} className='inline-block ml-1'>
+          {sortBy.field === 'hour' && sortBy.order === 'asc' ? (
+            <FaArrowUp />
+          ) : (
+            <FaArrowDown />
+          )}
+        </button>
+      </th>
+      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+        <DatePicker
+          selectsRange={true}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={handleDateChange}
+          placeholderText="Fechas"
+          className="mt-2 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          dateFormat="dd-MM-yyyy"
+          isClearable={true}
+        />
+      </th>
+      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+        Lugar
+      </th>
+      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+        Comensales
+      </th>
+      <th scope='col' className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5'>
+        Acciones
+      </th>
+    </tr>
+  </thead>
+  <tbody className='bg-white divide-y divide-gray-200'>
+    {paginatedReservations.map((reservation) => (
+      <tr key={reservation._id} className={`${reservation.completed ? 'bg-green-100' : ''}`}>
+        <td className='px-4 py-2 whitespace-nowrap'>
+          <div className='text-sm text-gray-900'>{reservation.name}</div>
+        </td>
+        <td className='px-4 py-2 whitespace-nowrap'>
+          <div className='text-sm text-gray-900'>{reservation.phoneNumber}</div>
+        </td>
+        <td className='px-4 py-2 whitespace-nowrap'>
+          <div className='text-sm text-gray-900'>{reservation.hour}</div>
+        </td>
+        <td className='px-4 py-2 whitespace-nowrap'>
+          <div className='text-sm text-gray-900'>{formatDate(reservation.date)}</div>
+        </td>
+        <td className='px-4 py-2 whitespace-nowrap'>
+          <div className='text-sm text-gray-900'>{reservation.place}</div>
+        </td>
+        <td className='px-4 py-2 whitespace-nowrap'>
+          <div className='text-sm text-gray-900'>{reservation.people}</div>
+        </td>
+        <td className='px-4 py-2 whitespace-nowrap text-sm font-medium flex'>
+          <Link to={`/update-reservation/reserve/${reservation._id}`} className='text-indigo-600 hover:text-indigo-900 mr-2'>
+            <PiPencilSimpleLineFill />
+          </Link>
+          {reservation.completed ? (
+            <IoRestaurantSharp className='text-red-600' />
+          ) : (
+            <button
+              onClick={() => handleMarkAsCompleted(reservation._id)}
+              className='text-green-600 hover:text-green-900'
+            >
+              <MdOutlineRestaurant />
+            </button>
+          )}
+          <button
+            onClick={() => { setShowModal(true); setReservationIdToDelete(reservation._id); }}
+            className='ml-2 text-red-600 hover:text-red-900'
+          >
+            <FaTrash />
+          </button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
             <div className="flex items-center justify-between mt-4">
               <button
                 onClick={() => handlePageClick(currentPage - 1)}
@@ -289,7 +289,7 @@ export default function Reservation() {
             {/* Sección para generar el informe PDF */}
             <div className="mt-4">
               <PDFDownloadLink
-                document={<ReportPDF reservations={filteredReservations} />}
+                document={<ReportPDF reservations={filteredReservations} startDate={formattedStartDate} endDate={formattedEndDate} />}
                 fileName="informe_reservas.pdf"
                 className="text-blue-600 hover:text-blue-900"
               >

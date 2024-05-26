@@ -7,8 +7,6 @@ import { IoRestaurantSharp } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
 
-
-
 export default function DashReservation() {
   const [reservations, setReservations] = useState([]);
   const [totalReservations, setTotalReservations] = useState(0);
@@ -23,7 +21,7 @@ export default function DashReservation() {
 
   const fetchReservations = async () => {
     try {
-      const res = await fetch(`/api/reserve/getreservations`);
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getreservations`);
       const data = await res.json();
 
       if (res.ok) {
@@ -49,7 +47,7 @@ export default function DashReservation() {
   const handleShowMore = async () => {
     const startIndex = reservations.length;
     try {
-      const res = await fetch(`/api/reserve/getreservations?startIndex=${startIndex}`);
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getreservations?startIndex=${startIndex}`);
       const newData = await res.json();
       if (res.ok) {
         const currentDate = new Date().toISOString().slice(0, 10); 
@@ -71,7 +69,7 @@ export default function DashReservation() {
 
   const handleDeleteReservation = async () => {
     try {
-      const res = await fetch(`/api/reserve/deletereservations/${reservationIdToDelete}`, {
+      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/deletereservations/${reservationIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -85,7 +83,7 @@ export default function DashReservation() {
 
   const handleMarkAsCompleted = async (reservationId) => {
     try {
-      const response = await fetch(`/api/reserve/close-reservation/${reservationId}`, {
+      const response = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/close-reservation/${reservationId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
