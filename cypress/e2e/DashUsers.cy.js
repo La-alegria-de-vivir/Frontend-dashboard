@@ -7,7 +7,7 @@ describe("DashUsers", () => {
         cy.get('input[type="email"]').type('natalia@correo.com');
         cy.get('input[type="password"]').type('natalia123');
         cy.get('button[type="submit"]').click();
-      cy.visit("http://localhost:5174/dashboard");
+      cy.visit("http://localhost:5174/dashboard?tab=users");
     });
   
     it("Muestra la tabla de usuarios", () => {

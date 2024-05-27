@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 100, // Ajusta el ancho de la imagen aquí
+    width: 100, 
     height: 50,
     marginRight: 10,
   },
