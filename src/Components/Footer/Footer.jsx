@@ -34,7 +34,7 @@ function Footer() {
               <h2 className="mb-6 text-sm font-semibold text-white">CONTACTA CON NOSOTROS</h2>
               <ul className="text-white font-medium">
                 <li className="mb-4">
-                  <a href="#" className="hover:underline">Teléfono: 652196890</a>
+                  <a href="#" className="hover:underline">Teléfono: 652196890-636965465</a>
                 </li>
               </ul>
             </div>

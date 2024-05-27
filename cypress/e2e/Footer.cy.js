@@ -9,15 +9,15 @@ describe("Footer Component", () => {
 });
 describe("Footer Component", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:5173/");
+    cy.visit("http://localhost:5174/");
   });
 
   it("Should display the correct links in the footer", () => {
     cy.get("footer a").should("have.length", 5);
     cy.get("footer a").eq(0).should("have.attr", "href", "https://maps.app.goo.gl/TrdWgmpdWXvLi7dq7");
     cy.get("footer a").eq(1).should("have.attr", "href", "#");
-    cy.get("footer a").eq(2).should("have.attr", "href", "/legal-warning");
-    cy.get("footer a").eq(3).should("have.attr", "href", "/privacy-policy");
+    cy.get("footer a").eq(2).should("have.attr", "href", "legal-warning");
+    cy.get("footer a").eq(3).should("have.attr", "href", "privacy-policy");
   });
 
   it("Should display the correct opening hours", () => {
