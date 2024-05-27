@@ -1,6 +1,6 @@
 describe("Aviso Legal", () => {
     beforeEach(() => {
-      cy.visit("http://localhost:5173/legal-warning");
+      cy.visit("http://localhost:5174/legal-warning");
     });
   
     it("Muestra el título correctamente", () => {

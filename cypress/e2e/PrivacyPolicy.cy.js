@@ -1,6 +1,6 @@
 describe("PrivacyPolicy Component", () => {
     beforeEach(() => {
-      cy.visit("http://localhost:5173/privacy-policy");
+      cy.visit("http://localhost:5174/privacy-policy");
     });
   
     it("Should display the title 'POLÍTICA DE PRIVACIDAD'", () => {

@@ -1,7 +1,7 @@
 
 describe("Footer Component", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:5173/");
+    cy.visit("http://localhost:5174/");
   });
   it("Should display the title", () => {
     cy.get("h2").contains("HORARIOS");

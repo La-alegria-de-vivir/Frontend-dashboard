@@ -1,6 +1,6 @@
 describe("Política de Cookies", () => {
     beforeEach(() => {
-      cy.visit("http://localhost:5173/cookies-policy");
+      cy.visit("http://localhost:5174/cookies-policy");
     });
   
     it("Muestra el título correctamente", () => {
