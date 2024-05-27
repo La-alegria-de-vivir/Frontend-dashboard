@@ -38,6 +38,11 @@ export default function Home() {
         dispatch(signInSuccess(data));
         navigate('/dashboard?tab=profile'); 
       }
+     
+      // const cookie = document.cookie
+      // console.log("EUREKAAAAA FUNCIONAAAA", cookie);
+      // console.log("ESTAS DE SUERTEEEEEE", data);
+
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
