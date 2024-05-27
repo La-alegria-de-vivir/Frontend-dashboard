@@ -86,7 +86,7 @@ export default function UpdateMenu() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/menu/update-menu/${formData._id}/${currentUser._id}`, {
+      const res = await fetch(`/api/menu/update-menu/${formData._id}/${currentUser._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

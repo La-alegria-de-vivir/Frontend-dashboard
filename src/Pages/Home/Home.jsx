@@ -5,6 +5,7 @@ import { signInStart, signInSuccess, signInFailure } from '../../Components/Redu
 import { useDispatch, useSelector } from 'react-redux';
 import logo from '../../../public/images/logo.png';
 import './Home.css';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const [formData, setFormData] = useState({});
@@ -23,13 +24,15 @@ export default function Home() {
     }
     try {
       dispatch(signInStart());
-      const res = await fetch('https://backend-la-alegria-de-vivir.onrender.com/api/auth/signin', {
+      const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(formData),
       });
       
       const data = await res.json();
+      const cookie = res.headers.get("access_token");
+      Cookies.set("access_token", cookie);
       if (data.success === false) {
         dispatch(signInFailure(data.message));
       }
@@ -39,9 +42,7 @@ export default function Home() {
         navigate('/dashboard?tab=profile'); 
       }
      
-      // const cookie = document.cookie
-      // console.log("EUREKAAAAA FUNCIONAAAA", cookie);
-      // console.log("ESTAS DE SUERTEEEEEE", data);
+  
 
     } catch (error) {
       dispatch(signInFailure(error.message));

@@ -40,7 +40,7 @@ describe("PrivacyPolicy Component", () => {
     
       it("Should display the 'Legitimación' information correctly", () => {
         cy.get("p").contains("Consentimiento del interesado.").should("exist");
-        cy.get("ul li").should("have.length", 31);
+        cy.get("ul li").should("have.length", 25);
       });
     
       it("Should display the 'Cesiones' information correctly", () => {
@@ -60,16 +60,16 @@ describe("PrivacyPolicy Component", () => {
     
       it("Should display the 'Qué vías de reclamación existen' information correctly", () => {
         cy.get("p").contains("Si considera que sus derechos no se han atendido debidamente").should("exist");
-        cy.get("ul li").eq(16).should("contain", "901 100 099 / 912 663 517");
-        cy.get("ul li").eq(17).should("contain", "C/ Jorge Juan, 6 28001-Madrid");
-        cy.get("ul li").eq(18).should("contain", "https://sedeagpd.gob.es/sede-electronica-web/");
-        cy.get("ul li").eq(19).should("contain", "www.agpd.es");
+        cy.get("ul li").eq(10).should("contain", "901 100 099 / 912 663 517");
+        cy.get("ul li").eq(11).should("contain", "C/ Jorge Juan, 6 28001-Madrid");
+        cy.get("ul li").eq(12).should("contain", "https://sedeagpd.gob.es/sede-electronica-web/");
+        cy.get("ul li").eq(13).should("contain", "www.agpd.es");
       });
     
       it("Should display the 'Categorías de datos' information correctly", () => {
         cy.get("section h2").eq(7).should("contain", "¿QUÉ CATEGORÍAS DE DATOS PUEDE TRATAR EL RESTAURANTE?");
-        cy.get("ul li").eq(20).should("contain", "Datos de carácter identificativo");
-        cy.get("ul li").eq(21).should("contain", "Datos relativos a las preferencias y satisfacción");
-        cy.get("ul li").eq(22).should("contain", "Datos relativos a la salud");
+        cy.get("ul li").eq(14).should("contain", "Datos de carácter identificativo");
+        cy.get("ul li").eq(15).should("contain", "Datos relativos a las preferencias y satisfacción");
+        cy.get("ul li").eq(16).should("contain", "Datos relativos a la salud");
       });
     });

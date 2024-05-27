@@ -61,11 +61,12 @@ export default function Reservation() {
 
   const fetchAllReservations = async () => {
     try {
-      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getTotalReservations`);
+      const res = await fetch(`/api/reserve/getTotalReservations`);
       const data = await res.json();
 
       if (res.ok) {
         setAllReservations(data.reservations);
+        
       } else {
         console.log("Error al obtener todas las reservas:", res.status);
       }
@@ -85,7 +86,7 @@ export default function Reservation() {
 
   const handleDeleteReservation = async () => {
     try {
-      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/deletereservations/${reservationIdToDelete}`, {
+      const res = await fetch(`/api/reserve/deletereservations/${reservationIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -100,7 +101,7 @@ export default function Reservation() {
 
   const handleMarkAsCompleted = async (reservationId) => {
     try {
-        const response = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/close-reservation/${reservationId}`, {
+        const response = await fetch(`/api/reserve/close-reservation/${reservationId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -153,14 +154,14 @@ export default function Reservation() {
 
   const handleChange = (e) => {
     setSearchName(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1); // Reset to first page on name search change
   };
 
   const filteredReservations = filterReservations(allReservations);
   const paginatedReservations = filteredReservations.slice((currentPage - 1) * 7, currentPage * 7);
   const totalPages = Math.ceil(filteredReservations.length / 7);
 
-
+  // Formatear las fechas antes de pasarlas a ReportPDF
   const formattedStartDate = startDate ? startDate.toLocaleDateString() : 'N/A';
   const formattedEndDate = endDate ? endDate.toLocaleDateString() : 'N/A';
 
