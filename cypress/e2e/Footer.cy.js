@@ -9,7 +9,7 @@ describe("Footer Component", () => {
 });
 describe("Footer Component", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:5173/");
+    cy.visit("http://localhost:5174/");
   });
 
   it("Should display the correct links in the footer", () => {
