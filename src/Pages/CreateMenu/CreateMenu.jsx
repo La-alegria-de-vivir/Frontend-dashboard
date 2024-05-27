@@ -62,7 +62,7 @@ export default function CreateMenu() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('https://backend-la-alegria-de-vivir.onrender.com/api/menu/create', {
+      const res = await fetch('/api/menu/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

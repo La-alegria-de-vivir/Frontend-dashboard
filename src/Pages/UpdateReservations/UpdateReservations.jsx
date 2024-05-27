@@ -11,7 +11,7 @@ const UpdateReservations = () => {
     useEffect(() => {
         const fetchReservationData = async () => {
             try {
-                const response = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getreservations/${reservationId}`);
+                const response = await fetch(`/api/reserve/getreservations/${reservationId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setReservationData(data);
@@ -32,14 +32,14 @@ const UpdateReservations = () => {
         values.date = new Date(values.date).toISOString().split('T')[0];
     
         try {
-            const response = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/update-reservations/${reservationId}`, {
+            const response = await fetch(`/api/reserve/update-reservations/${reservationId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values)
             });
             console.log(reservationId);
             if (response.ok) {
-                const updatedResponse = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getreservations/${reservationId}`);
+                const updatedResponse = await fetch(`/api/reserve/getreservations/${reservationId}`);
                 if (updatedResponse.ok) {
                     const updatedData = await updatedResponse.json();
                     setReservationData(updatedData);
