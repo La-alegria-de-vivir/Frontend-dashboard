@@ -7,8 +7,7 @@ describe('Sidebar Navigation', () => {
     cy.get('input[type="password"]').type('Maremoto123');
     cy.get('button[type="submit"]').click();
 
-    // Wait for the dashboard to load
-    cy.wait(2000); // Adjust according to your application's loading time
+    cy.wait(2000); 
 
     cy.url().should('include', '/dashboard');
   });
@@ -21,10 +20,10 @@ describe('Sidebar Navigation', () => {
 
   context('when user is admin', () => {
     beforeEach(() => {
-      // Check if the user is admin
+      
       cy.get('input[type="email"]').then($emailInput => {
         const email = $emailInput.val();
-        // Assume maremotosutnami@gmail.com is admin
+        
         if (email === 'maremotosutnami@gmail.com') {
           cy.wrap({ isAdmin: true }).as('adminUser');
         } else {
