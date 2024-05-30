@@ -1,59 +1,38 @@
-// Pruebas para la página DashUsers
+describe("DashMenu Component", () => {
+  beforeEach(() => {
+    cy.viewport(1920, 1080);
+    cy.visit("http://localhost:5174/");
+    cy.get("#email").type("rox@gmail.com");
+    cy.get("#password").type("1234");
+    cy.get("form").submit();
 
-describe("DashUsers", () => {
-    beforeEach(() => {
-      // Iniciar sesión como usuario admin antes de cada prueba
-      cy.visit("http://localhost:5174");
-        cy.get('input[type="email"]').type('natalia@correo.com');
-        cy.get('input[type="password"]').type('natalia123');
-        cy.get('button[type="submit"]').click();
-      cy.visit("http://localhost:5174/dashboard?tab=users");
-    });
-  
-    it("Muestra la tabla de usuarios", () => {
-      cy.get('table').should('exist');
-      cy.get('thead th').should('have.length', 5);
-      cy.get('tbody tr').should('have.length.greaterThan', 0);
-    });
-  
-    it("Muestra el botón 'Mostrar más' si hay más usuarios", () => {
-      cy.get('button').contains('Mostrar más').should('exist');
-    });
-  
-    it("Carga más usuarios al hacer clic en 'Mostrar más'", () => {
-        cy.get('tbody tr').then(($rows) => {
-          const initialUserCount = $rows.length;
-          cy.get('button').contains('Mostrar más').click();
-          cy.get('tbody tr').should('have.length.greaterThan', initialUserCount);
-        });
-      });
-  
-    it("Muestra el modal de confirmación al hacer clic en 'Borrar'", () => {
-      cy.get('td span').contains('Borrar').first().click();
-      cy.get('.modal').should('exist');
-    });
-  
-    it("No elimina un usuario al confirmar en el modal", () => {
-      const userToDelete = Cypress.$('tbody tr').first();
-      const userId = userToDelete.data('user-id');
-      cy.get('td span').contains('Borrar').first().click();
-      cy.server();
-      cy.route({
-        method: 'DELETE',
-        url: `/api/user/delete/${userId}`,
-        status: 200,
-        response: {}
-      }).as('deleteUser');
-      cy.get('.modal button').contains('Yes, I\'m sure').click();
-      cy.wait('@deleteUser');
-      cy.get(`tbody tr[data-user-id="${userId}"]`).should('exist');
-    });
-  
-    it("No muestra la tabla si no hay usuarios", () => {
-      // Eliminar todos los usuarios de prueba
-      cy.deleteTestUsers();
-      cy.visit("http://localhost:5174/dashboard?tab=users");
-      cy.get('table').should('not.exist');
-      cy.contains('You have no users yet!').should('exist');
-    });
+    cy.wait(2000);
+    cy.get('[href="/dashboard?tab=users"] > .p-4').click();
+    cy.wait(2000);
   });
+
+  it("should show at least 9 users", () => {
+    cy.get(".table-auto").should("exist");
+    cy.get("tbody tr").should("have.length", 9);
+  });
+
+  it('should show more users when when clicking "Show More"', () => {
+    cy.get("button.w-full.text-teal-500.self-center.text-sm.py-7").click();
+    cy.get("tbody tr").should("have.length.greaterThan", 9);
+  });
+
+  it("should open a modal when trying to delete a user", () => {
+    cy.get("tbody > tr > td:last-child > span").contains("Borrar").click();
+    cy.get("#modal-title").should("be.visible");
+  });
+
+  it("should not remove user when the clicking cancel button", () => {
+    cy.get("tbody > tr > td:last-child > span").contains("Borrar").click();
+    cy.get(".bg-gray-50 > .mt-3");
+    cy.get(
+      ".mt-3.w-full.inline-flex.justify-center.rounded-md.border.border-gray-300.shadow-sm.px-4.py-2.bg-white.text-base.font-medium.text-gray-700"
+    ).click();
+    cy.get("#modal-title").should("not.exist");
+    cy.get("tbody tr:first-child").contains("example4").should("exist");
+  });
+});

@@ -1,6 +1,7 @@
 describe("UpdateReservations Page", function () {
   beforeEach(function () {
-    cy.visit("http://localhost:5173/");
+    cy.viewport(1920, 1080);
+    cy.visit("http://localhost:5174/");
     cy.get("#email").type("rox@gmail.com");
     cy.get("#password").type("1234");
     cy.get("form").submit();
@@ -11,28 +12,28 @@ describe("UpdateReservations Page", function () {
     cy.get(":nth-child(1) > .flex > .text-teal-500 > svg > path").click();
   });
 
-  it("debería mostrar 'Cargando...' mientras espera los datos de la reserva", function () {
+  it("should display 'Cargando...' while waiting for reservation data", function () {
     cy.contains("Cargando...").should("be.visible");
   });
 
-  it("debería cargar el formulario de actualización de reservas", function () {
+  it("should load the update reservation form", function () {
     cy.get(".max-w-4xl").should("exist");
     cy.get("form").should("exist");
   });
 
-  it("debería mostrar un mensaje de error para menos de 1 comensal", function () {
+  it("should display an error message for less than 1 guest", function () {
     cy.get('input[name="people"]').clear().type("0");
     cy.get('button[type="submit"]').click();
     cy.contains("El número mínimo de comensales es 1").should("be.visible");
   });
 
-  it("debería mostrar un mensaje de error para más de 10 comensales", function () {
+  it("should display an error message for more than 10 guests", function () {
     cy.get('input[name="people"]').clear().type("11");
     cy.get('button[type="submit"]').click();
     cy.contains("El número máximo de comensales es 10").should("be.visible");
   });
 
-  it("debería enviar el formulario y mostrar el modal de confirmación", function () {
+  it("should send the form and display the confirmation modal", function () {
     cy.get('input[name="name"]').clear().type("Nuevo nombre");
     cy.get('input[name="people"]').clear().type("5");
     cy.get('input[name="date"]').clear().type("2024-06-01");
