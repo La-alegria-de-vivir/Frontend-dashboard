@@ -1,6 +1,7 @@
 describe("DashMenu Component", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:5173/");
+    cy.viewport(1920, 1080);
+    cy.visit("http://localhost:5174/");
     cy.get("#email").type("rox@gmail.com");
     cy.get("#password").type("1234");
     cy.get("form").submit();
@@ -16,8 +17,8 @@ describe("DashMenu Component", () => {
   });
 
   it('should show more menu items when when clicking "Show More"', () => {
-    cy.get("button.w-full.text-teal-500.self-center.text-sm.py-7").click(); // Ajusta el selector si es necesario
-    cy.get("tbody tr").should("have.length.greaterThan", 5); // Verifica que haya más de 5 filas después de hacer clic
+    cy.get("button.w-full.text-teal-500.self-center.text-sm.py-7").click();
+    cy.get("tbody tr").should("have.length.greaterThan", 5);
   });
 
   it("should open a modal when trying to delete a menu item", () => {
@@ -34,6 +35,4 @@ describe("DashMenu Component", () => {
     cy.get("#modal-title").should("not.exist");
     cy.get("tbody tr:first-child").should("exist");
   });
-
-  // Agrega más pruebas según sea necesario
 });

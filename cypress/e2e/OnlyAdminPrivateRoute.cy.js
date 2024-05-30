@@ -1,10 +1,10 @@
 describe("OnlyAdminPrivateRoute Component", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:5173");
+    cy.viewport(1920, 1080);
+    cy.visit("http://localhost:5174");
   });
 
-  // TODO: meter credenciales en .env
-  it("Redirecciona a / si el usuario no es administrador", () => {
+  it("Redirects to '/' if the user is not an administrator", () => {
     cy.get("#email").type("noadmin@test.com");
     cy.get("#password").type("1234");
     cy.get("form").submit();
@@ -19,8 +19,7 @@ describe("OnlyAdminPrivateRoute Component", () => {
     cy.location("pathname").should("eq", "/");
   });
 
-  // TODO: meter credenciales en .env
-  it("Permite el acceso si el usuario es administrador", () => {
+  it("Allows access if the user is an administrator", () => {
     cy.get("#email").type("rox@gmail.com");
     cy.get("#password").type("1234");
     cy.get("form").submit();
