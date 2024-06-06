@@ -1,9 +1,9 @@
-describe("DashMenu Component", () => {
+describe("DashMenu", () => {
   beforeEach(() => {
     cy.viewport(1920, 1080);
     cy.visit("http://localhost:5174/");
-    cy.get("#email").type("rox@gmail.com");
-    cy.get("#password").type("1234");
+    cy.get("#email").type("amanda@correo.com");
+    cy.get("#password").type("correo1");
     cy.get("form").submit();
 
     cy.wait(2000);

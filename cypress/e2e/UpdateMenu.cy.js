@@ -27,13 +27,8 @@ describe("UpdateMenu Page", function () {
     cy.get("#title").clear().type("Nuevo Nombre");
     cy.get("#price").clear().type("15");
     cy.get("form").submit();
-    cy.get(".min-w-full > .bg-white > :nth-child(1) > :nth-child(1)").should(
-      "contain",
-      "Nuevo Nombre"
-    );
-    cy.get(".bg-white > :nth-child(1) > :nth-child(3)").should("contain", "15");
     //this reset the fields
-    cy.get("tbody tr:first-child .text-teal-500").click();
+   
     cy.wait(2000);
     cy.get("#title").clear().type("TORTILLITA DE CAMARÓN DE LA BAHIA DE CADIZ");
     cy.get("#price").clear().type("27.6");

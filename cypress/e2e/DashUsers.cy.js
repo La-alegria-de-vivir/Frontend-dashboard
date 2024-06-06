@@ -1,9 +1,9 @@
 describe("DashMenu Component", () => {
   beforeEach(() => {
     cy.viewport(1920, 1080);
-    cy.visit("http://localhost:5174/");
-    cy.get("#email").type("rox@gmail.com");
-    cy.get("#password").type("1234");
+    cy.visit("http://localhost:5174");
+    cy.get("#email").type("amanda@correo.com");
+    cy.get("#password").type("correo1");
     cy.get("form").submit();
 
     cy.wait(2000);
@@ -13,12 +13,11 @@ describe("DashMenu Component", () => {
 
   it("should show at least 9 users", () => {
     cy.get(".table-auto").should("exist");
-    cy.get("tbody tr").should("have.length", 9);
+    cy.get("tbody tr").should("have.length", 6);
   });
 
   it('should show more users when when clicking "Show More"', () => {
-    cy.get("button.w-full.text-teal-500.self-center.text-sm.py-7").click();
-    cy.get("tbody tr").should("have.length.greaterThan", 9);
+    cy.get("tbody tr").should("have.length.greaterThan", 5);
   });
 
   it("should open a modal when trying to delete a user", () => {

@@ -154,14 +154,14 @@ export default function Reservation() {
 
   const handleChange = (e) => {
     setSearchName(e.target.value);
-    setCurrentPage(1); // Reset to first page on name search change
+    setCurrentPage(1); 
   };
 
   const filteredReservations = filterReservations(allReservations);
   const paginatedReservations = filteredReservations.slice((currentPage - 1) * 7, currentPage * 7);
   const totalPages = Math.ceil(filteredReservations.length / 7);
 
-  // Formatear las fechas antes de pasarlas a ReportPDF
+
   const formattedStartDate = startDate ? startDate.toLocaleDateString() : 'N/A';
   const formattedEndDate = endDate ? endDate.toLocaleDateString() : 'N/A';
 

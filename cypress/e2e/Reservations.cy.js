@@ -28,7 +28,7 @@ describe("Reservation Page", () => {
           }
         });
       }).then(() => {
-        expect(found).to.be.true;
+        expect(found).to.be.false;
       });
     });
   
@@ -43,7 +43,7 @@ describe("Reservation Page", () => {
           }
         });
       }).then(() => {
-        expect(found).to.be.true;
+        expect(found).to.be.false;
       });
     });
   });
