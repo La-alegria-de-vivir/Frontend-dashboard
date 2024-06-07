@@ -45,7 +45,7 @@ export default function Reservation() {
         params.append('sortOrder', sortBy.order);
       }
 
-      const res = await fetch(`https://backend-la-alegria-de-vivir.onrender.com/api/reserve/getTotalReservations?${params.toString()}`);
+      const res = await fetch(`/api/reserve/getTotalReservations?${params.toString()}`);
       const data = await res.json();
 
       if (res.ok) {
